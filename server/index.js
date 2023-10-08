@@ -7,25 +7,37 @@ const path = require("path");
 
 const app = express();
 
+require('dotenv').config()
+
+// GET ENV Variables
+const HTTPS = process.env.HTTPS
+const HOSTNAME = process.env.HOSTNAME
+const PORT = process.env.PORT
+const CLIENT_URL = process.env.CLIENT_URL ?? null
+const SESSION_SECRET = process.env.SESSION_SECRET
+const LOGIN_TITLE = process.env.LOGIN_TITLE
+
+
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: CLIENT_URL,
         credentials: true,
     })
 );
 
 const config = {
-	host: 'localhost',
-	port: 3001,
+	host: HOSTNAME,
+	port: PORT,
 	url: null,
 };
 
 if (!config.url) {
-	config.url = 'http://' + config.host + ':' + config.port;
+	const protocol = HTTPS == 'true' ? 'https://': 'http://'
+	config.url = protocol + config.host + ':' + config.port;
 }
 
 app.use(session({
-	secret: '12345',
+	secret: SESSION_SECRET,
 	resave: true,
 	saveUninitialized: true,
 }));
@@ -68,14 +80,16 @@ app.get('/login',
 	function(req, res, next) {
 		if (req.user) {
 			// Already authenticated.
-			return res.redirect('http://localhost:3000/');
+			return res.redirect(CLIENT_URL);
 		}
 		next();
 	},
 	new LnurlAuth.Middleware({
 		callbackUrl: config.url + '/login',
-		cancelUrl: "http://localhost:3000/",
+		cancelUrl: CLIENT_URL,
         loginTemplateFilePath: path.join(__dirname, 'login.html'),
+		title: LOGIN_TITLE,
+		uriSchemaPrefix: 'LIGHTNING:',
 	})
 );
 
@@ -89,7 +103,7 @@ app.get('/logout',
             req.session.destroy();
             res.json({message: "user logged out"});
 			// Already authenticated.
-			return res.redirect('http://localhost:3000/');
+			return res.redirect(CLIENT_URL);
 		}
 		next();
 	});

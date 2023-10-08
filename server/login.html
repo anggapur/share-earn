@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Lightning Blog</title>
+	<title>{{title}}</title>
 	<style>
 		html, body {
 			width: 100%;
@@ -81,8 +81,8 @@
 
 	<div id="content">
 		<div class="wrap">
-			<h1>Lightning Blog</h1>
-			<p>Click on the qr code to login</p>
+			<h1>{{title}}</h1>
+			<p>Click or Scan on the QRCode to login</p>
 			<a id="qrcode" href="{{href}}"><img src="{{dataUri}}"></a>
 			<div id="buttons">
 				{{#if cancelUrl}}
