@@ -5,19 +5,31 @@ This repository is cloned from [lnurl-auth repo](https://github.com/theGrape1337
 ### Server
 
 Go to **server** directory
-`cd server`
+
+    cd server
+
 Install all the dependencies defined in the package.json file
-`npm install`
+
+    npm install
+
 Start the server
-`npm start`
+
+    npm start
 
 ### Client
 
 Go to **client** directory
-`cd client`
+
+    cd client
+
 Copy **.env.example** file and rename to **.env**, then fill the values.
-`cp .env.example .env`
+
+    cp .env.example .env
+
 Install all the dependencies defined in the package.json file
-`npm install`
+
+    npm install
+
 Start the client
-`npm start`
+
+    npm start
