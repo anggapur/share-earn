@@ -1,6 +1,5 @@
-CREATE DATABASE db_sharearn
+use db_sharearn
 
-USE db_sharearn
 
 CREATE TABLE db_sharearn.users (
 	id INT auto_increment NOT NULL,
@@ -9,6 +8,13 @@ CREATE TABLE db_sharearn.users (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+
+INSERT INTO db_sharearn.users (id, public_key) 
+VALUES 
+(1, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8af50"),
+(2, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aEEE"),
+(3, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aFFF");
+
 
 CREATE TABLE db_sharearn.campaigns (
 	id INT auto_increment NOT NULL,
@@ -25,6 +31,13 @@ CREATE TABLE db_sharearn.campaigns (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
+INSERT INTO db_sharearn.campaigns (id, user_id, title, description, original_content_url, reward_per_click, lnurl_pay, status) 
+VALUES 
+(1, 1, "Campaign 1", "Description...", "https://www.w3schools.com/mysql/mysql_insert.asp", 1000, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7WZ6WEX5GJCZTXF8E",2),
+(2, 1, "Campaign 2", "Description...", "https://stackoverflow.com/questions/6889065/inserting-multiple-rows-in-mysql", 500, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ74M5DA9YYKQ9R6EJY",1),
+(3, 1, "Campaign 3", "Description...", "https://dev.mysql.com/doc/refman/8.0/en/integer-types.html", 100, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7E6NDEP8VEQY64S3M",0);
+
+
 CREATE TABLE db_sharearn.top_up_rewards (
 	id INT auto_increment NOT NULL,
 	campaign_id int,
@@ -35,7 +48,13 @@ CREATE TABLE db_sharearn.top_up_rewards (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
-	
+
+INSERT INTO db_sharearn.top_up_rewards (id, campaign_id, ln_payment_id, amount)
+VALUES
+(1,1,"0x1", 1000000000),
+(2,1,"0x2", 2000000000);
+
+
 CREATE TABLE db_sharearn.shareable_urls (
 	id INT auto_increment NOT NULL,
 	campaign_id int,
@@ -48,6 +67,12 @@ CREATE TABLE db_sharearn.shareable_urls (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
+INSERT INTO db_sharearn.shareable_urls (id, campaign_id, user_id, url_hash)
+VALUES
+(1, 1, 2, "mfny623jAa"),
+(2, 1, 3, "9u8HN9jhjj");
+
+
 CREATE TABLE db_sharearn.click_counts (
 	id INT auto_increment NOT NULL,
 	shareable_url_id int,
@@ -58,16 +83,29 @@ CREATE TABLE db_sharearn.click_counts (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+
+INSERT INTO db_sharearn.click_counts (id, shareable_url_id, ip, reward) 
+VALUES
+(1, 1, "192.168.1.1", 1000),
+(2, 1, "192.168.1.2", 1000),
+(3, 1, "192.168.1.3", 1000);
 	
+
 CREATE TABLE db_sharearn.claimed_rewards (
 	id INT auto_increment NOT NULL,
 	user_id int,
-	PRIMARY KEY (id),
-	FOREIGN KEY (user_id) REFERENCES users(id),
 	status tinyint,
 	payment_destination_type tinyint,
 	payment_destination varchar(250),
 	amount BIGINT default(0),
+	PRIMARY KEY (id),
+	FOREIGN KEY (user_id) REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
+
+INSERT INTO db_sharearn.claimed_rewards (id, user_id, status, payment_destination_type, payment_destination, amount)
+VALUES
+(1, 2, 1, 1, "kitchenquail33@walletofsatoshi.com", 3000)
+
+	
