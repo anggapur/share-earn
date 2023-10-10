@@ -3,7 +3,7 @@ use db_sharearn
 
 CREATE TABLE db_sharearn.users (
 	id INT auto_increment NOT NULL,
-	public_key varchar(250) NOT NULL,
+	public_key varchar(250) NOT NULL,	
 	PRIMARY KEY (id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -20,22 +20,24 @@ CREATE TABLE db_sharearn.campaigns (
 	id INT auto_increment NOT NULL,
 	user_id int,
 	title varchar(100),
+	thumbnail varchar(100) NULL,
 	description text NULL,
 	original_content_url varchar(150) NULL,
 	reward_per_click BIGINT default(0),
-	lnurl_pay varchar(255),
+	lnurl_pay varchar(255),	
 	status tinyint,
+	tags text,
 	PRIMARY KEY (id),
 	FOREIGN KEY (user_id) REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
-INSERT INTO db_sharearn.campaigns (id, user_id, title, description, original_content_url, reward_per_click, lnurl_pay, status) 
+INSERT INTO db_sharearn.campaigns (id, user_id, title, thumbnail, description, original_content_url, reward_per_click, lnurl_pay, status, tags) 
 VALUES 
-(1, 1, "Campaign 1", "Description...", "https://www.w3schools.com/mysql/mysql_insert.asp", 1000, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7WZ6WEX5GJCZTXF8E",2),
-(2, 1, "Campaign 2", "Description...", "https://stackoverflow.com/questions/6889065/inserting-multiple-rows-in-mysql", 500, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ74M5DA9YYKQ9R6EJY",1),
-(3, 1, "Campaign 3", "Description...", "https://dev.mysql.com/doc/refman/8.0/en/integer-types.html", 100, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7E6NDEP8VEQY64S3M",0);
+(1, 1, "Campaign 1", "thumb1.png", "Description...", "https://www.w3schools.com/mysql/mysql_insert.asp", 1000, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7WZ6WEX5GJCZTXF8E",2, "tag1|tag2|tag3"),
+(2, 1, "Campaign 2", "thumb1.png", "Description...", "https://stackoverflow.com/questions/6889065/inserting-multiple-rows-in-mysql", 500, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ74M5DA9YYKQ9R6EJY",1, "tag5"),
+(3, 1, "Campaign 3", "thumb1.png", "Description...", "https://dev.mysql.com/doc/refman/8.0/en/integer-types.html", 100, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7E6NDEP8VEQY64S3M",0, "tag1|tag2|tag4");
 
 
 CREATE TABLE db_sharearn.top_up_rewards (
