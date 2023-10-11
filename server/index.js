@@ -12,6 +12,8 @@ const app = express();
 
 // Databases
 const userDb = require('./database/user')
+const shareableUrlDb = require('./database/shareable_url')
+const clickCountDb = require('./database/click_count')
 
 // Routers
 const campaignRouter = require('./routes/campaign.router')
@@ -115,6 +117,30 @@ app.get('/logout',
 		}
 		next();
 	});
+
+
+app.get("/:urlHash", async function(req, res, next) {
+	const { urlHash } = req.params
+	
+	// Check is URL Hash is exist
+	const shareableUrl = await shareableUrlDb.getCampaignByUrl(urlHash)		
+
+	if(shareableUrl == null || typeof shareableUrl == "undefined") {
+		return res.send("Invalid URL")
+	}
+
+	const clientIP = req.connection.remoteAddress;	
+
+	// Check is click already counted
+	// Insert click counted
+	const isClicked = await clickCountDb.isAttempted(shareableUrl.id, clientIP)	
+	if(!isClicked) {
+		await clickCountDb.add(shareableUrl.id, clientIP, shareableUrl.reward_per_click ?? 0)
+	}
+
+	// Redirect
+	return res.redirect(shareableUrl.original_content_url)
+});
 
 const server = app.listen(serverConfig.port, serverConfig.host, function() {
 	console.log('Server listening at ' + serverConfig.url);
