@@ -5,10 +5,16 @@ const session = require('express-session');
 const cors = require("cors");
 const path = require("path");
 
+const config = require('./config/config')
+
+// Init express
 const app = express();
 
 // Databases
 const userDb = require('./database/user')
+
+// Routers
+const campaignRouter = require('./routes/campaign.router')
 
 app.use(
     cors({
@@ -68,6 +74,8 @@ app.get('/', function(req, res) {
 	}
 	res.send('Logged-in');
 });
+
+app.use('/api/v1/campaign', campaignRouter)
 
 app.get('/login',
 	async function(req, res, next) {
