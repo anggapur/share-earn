@@ -7,7 +7,8 @@ const path = require("path");
 
 const app = express();
 
-const config = require('./config/config')
+// Databases
+const userDb = require('./database/user')
 
 app.use(
     cors({
@@ -69,8 +70,15 @@ app.get('/', function(req, res) {
 });
 
 app.get('/login',
-	function(req, res, next) {
-		if (req.user) {
+	async function(req, res, next) {
+		if (req.user) {			
+			if(req.user !== null && typeof req.user !== "undefined") {								
+				// Check user
+				const isUserRegistered = await userDb.isUserExist(req.user.id)
+				if(!isUserRegistered) {
+					await userDb.create(req.user.id)
+				}
+			}
 			// Already authenticated.
 			return res.redirect(config.CLIENT_URL);
 		}
