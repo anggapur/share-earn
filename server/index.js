@@ -7,37 +7,28 @@ const path = require("path");
 
 const app = express();
 
-require('dotenv').config()
-
-// GET ENV Variables
-const HTTPS = process.env.HTTPS
-const HOSTNAME = process.env.HOSTNAME
-const PORT = process.env.PORT
-const CLIENT_URL = process.env.CLIENT_URL ?? null
-const SESSION_SECRET = process.env.SESSION_SECRET
-const LOGIN_TITLE = process.env.LOGIN_TITLE
-
+const config = require('./config/config')
 
 app.use(
     cors({
-        origin: CLIENT_URL,
+        origin: config.CLIENT_URL,
         credentials: true,
     })
 );
 
-const config = {
-	host: HOSTNAME,
-	port: PORT,
+const serverConfig = {
+	host: config.HOSTNAME,
+	port: config.PORT,
 	url: null,
 };
 
-if (!config.url) {
-	const protocol = HTTPS == 'true' ? 'https://': 'http://'
-	config.url = protocol + config.host + ':' + config.port;
+if (!serverConfig.url) {
+	const protocol = config.HTTPS == 'true' ? 'https://': 'http://'
+	serverConfig.url = protocol + serverConfig.host + ':' + serverConfig.port;
 }
 
 app.use(session({
-	secret: SESSION_SECRET,
+	secret: config.SESSION_SECRET,
 	resave: true,
 	saveUninitialized: true,
 }));
@@ -68,6 +59,7 @@ passport.use(new LnurlAuth.Strategy(function(linkingPublicKey, done) {
 
 app.use(passport.authenticate('lnurl-auth'));
 
+
 app.get('/', function(req, res) {
 	if (!req.user) {
 		return res.send('You are not authenticated. To login go <a href="/login">here</a>.');
@@ -80,15 +72,15 @@ app.get('/login',
 	function(req, res, next) {
 		if (req.user) {
 			// Already authenticated.
-			return res.redirect(CLIENT_URL);
+			return res.redirect(config.CLIENT_URL);
 		}
 		next();
 	},
 	new LnurlAuth.Middleware({
-		callbackUrl: config.url + '/login',
-		cancelUrl: CLIENT_URL,
+		callbackUrl: serverConfig.url + '/login',
+		cancelUrl: config.CLIENT_URL,
         loginTemplateFilePath: path.join(__dirname, 'login.html'),
-		title: LOGIN_TITLE,
+		title: config.LOGIN_TITLE,
 		uriSchemaPrefix: 'LIGHTNING:',
 	})
 );
@@ -103,13 +95,13 @@ app.get('/logout',
             req.session.destroy();
             res.json({message: "user logged out"});
 			// Already authenticated.
-			return res.redirect(CLIENT_URL);
+			return res.redirect(config.CLIENT_URL);
 		}
 		next();
 	});
 
-const server = app.listen(config.port, config.host, function() {
-	console.log('Server listening at ' + config.url);
+const server = app.listen(serverConfig.port, serverConfig.host, function() {
+	console.log('Server listening at ' + serverConfig.url);
 });
 
 process.on('uncaughtException', error => {
