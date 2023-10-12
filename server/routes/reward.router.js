@@ -31,6 +31,34 @@ router.get('/', authMiddleware, async (req, res, next) => {
 })
 
 
+router.get('/info', authMiddleware, async (req, res, next) => {
+    // Get User Id
+    const user = await userDb.first(req.user.id)
+    if(user == null || typeof user == "undefined") {
+        return res.status(400).send({
+            errCode: 'ERR_AUTH', 
+            message: "Error unknown user" 
+        })
+    }
+
+    // Get total rewards
+    // check is total unclaimed rewards sufficient to claim
+    const totalRewards = await clickCountDb.getTotalRewardByUserId(user.id)
+    const totalPendingClaims = await claimedRewardDb.getTotalPendingClaim(user.id)
+    const totalSuccessClaims = await claimedRewardDb.getTotalSuccessClaim(user.id)
+    const totalUnclaimedRewards = parseInt(totalRewards) - (parseInt(totalPendingClaims) + parseInt(totalSuccessClaims))
+
+    return res.status(200).send({
+        userId: user.id,
+        totalRewards,
+        totalPendingClaims,
+        totalSuccessClaims,
+        totalUnclaimedRewards,
+    })
+
+
+})
+
 router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
 
     const {
