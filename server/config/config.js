@@ -12,6 +12,9 @@ const DATABASE_USER = process.env.DATABASE_USER
 const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD
 const DATABASE_NAME = process.env.DATABASE_NAME
 
+const INVOICE_TYPE = 0
+const LN_EMAIl_TYPE = 1
+const LNURLP_TYPE = 2
 
 module.exports = {
     HTTPS,
@@ -24,4 +27,7 @@ module.exports = {
     DATABASE_USER,
     DATABASE_PASSWORD,
     DATABASE_NAME,
+    INVOICE_TYPE,
+    LN_EMAIl_TYPE,
+    LNURLP_TYPE
 }

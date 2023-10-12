@@ -5,11 +5,12 @@ const tableName = 'claimed_rewards'
 const PENDING = 0;
 const SUCCESS = 1;
 
-async function getTotalSuccessClaim() {
+async function getTotalSuccessClaim(userId) {
     try {
         const total = await db
         .from(tableName)
         .where('status', SUCCESS)
+        .where('user_id', userId)
         .sum('amount as totalPending')
         .then((result) => {                
             const totalPending = result[0].totalPending;            
@@ -25,11 +26,12 @@ async function getTotalSuccessClaim() {
     }  
 }
 
-async function getTotalPendingClaim() {
+async function getTotalPendingClaim(userId) {
     try {
         const total = await db
         .from(tableName)
         .where('status', PENDING)
+        .where('user_id', userId)
         .sum('amount as totalPending')
         .then((result) => {                
             const totalPending = result[0].totalPending;            

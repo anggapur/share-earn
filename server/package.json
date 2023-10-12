@@ -16,6 +16,8 @@
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
     "knex": "^3.0.1",
+    "ln-service": "^57.0.1",
+    "lnurl": "^0.25.1",
     "mysql2": "^3.6.1",
     "passport": "^0.6.0",
     "passport-lnurl-auth": "^1.5.1",

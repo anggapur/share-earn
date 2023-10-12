@@ -17,6 +17,7 @@ const clickCountDb = require('./database/click_count')
 
 // Routers
 const campaignRouter = require('./routes/campaign.router')
+const rewardRouter = require('./routes/reward.router')
 
 app.use(
     cors({
@@ -77,7 +78,7 @@ app.get('/', function(req, res) {
 	res.send('Logged-in');
 });
 
-app.use('/api/v1/campaign', campaignRouter)
+app.use('/api/v1/rewards', rewardRouter)
 
 app.get('/login',
 	async function(req, res, next) {
