@@ -78,6 +78,7 @@ app.get('/', function(req, res) {
 	res.send('Logged-in');
 });
 
+app.use('/api/v1/campaigns', campaignRouter)
 app.use('/api/v1/rewards', rewardRouter)
 
 app.get('/login',
