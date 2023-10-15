@@ -16,6 +16,9 @@ const INVOICE_TYPE = 0
 const LN_EMAIl_TYPE = 1
 const LNURLP_TYPE = 2
 
+const LND_GRPC = process.env.LND_GRPC
+const LND_MACAROON_PATH = process.env.LND_MACAROON_PATH
+
 module.exports = {
     HTTPS,
     HOSTNAME,
@@ -29,5 +32,7 @@ module.exports = {
     DATABASE_NAME,
     INVOICE_TYPE,
     LN_EMAIl_TYPE,
-    LNURLP_TYPE
+    LNURLP_TYPE,
+    LND_GRPC,
+    LND_MACAROON_PATH
 }
