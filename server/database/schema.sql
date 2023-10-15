@@ -43,18 +43,23 @@ VALUES
 CREATE TABLE db_sharearn.top_up_rewards (
 	id INT auto_increment NOT NULL,
 	campaign_id int,
-	ln_payment_id varchar(250) UNIQUE,
+	bolt11 varchar(250) UNIQUE,
+	ln_preimage varchar(250) UNIQUE,
+	ln_payment_id varchar(250) UNIQUE NULL,
+	status tinyint,
 	amount BIGINT default(0),
+	invoice_created BIGINT,
+	invoice_settled BIGINT default(0),
 	FOREIGN KEY (campaign_id) REFERENCES campaigns(id),
 	PRIMARY KEY (id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
-INSERT INTO db_sharearn.top_up_rewards (id, campaign_id, ln_payment_id, amount)
+INSERT INTO db_sharearn.top_up_rewards (id, campaign_id, bolt11, ln_preimage, ln_payment_id, status, amount, invoice_created, invoice_settled)
 VALUES
-(1,1,"0x1", 1000000000),
-(2,1,"0x2", 2000000000);
+(1,1,"lnbc12","Iih8huu","0x1", 1, 1000000000, 1681800011, 1681800012),
+(2,1,"lnbc13","Iih8h111","0x2", 1, 2000000000, 1681800012, 1681800013);
 
 
 CREATE TABLE db_sharearn.shareable_urls (
