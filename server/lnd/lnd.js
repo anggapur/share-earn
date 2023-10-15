@@ -71,10 +71,10 @@ async function initLNRPC(type) {
     const lndGrpc = config.LND_GRPC
 
     switch(type) {
-        case 'LNRPC':
+        case 'LIGHTNING':
             let lnrpc = lnrpcDescriptor.lnrpc;
             return new lnrpc.Lightning(lndGrpc, credentials);                    
-        case 'LNRPC_ROUTER':
+        case 'ROUTER':
             let routerrpc = lnrpcDescriptor.routerrpc;
             return new routerrpc.Router(lndGrpc, credentials);            
         default:
