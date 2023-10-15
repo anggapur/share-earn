@@ -37,7 +37,7 @@ async function get(page = 1, perPage = 10) {
     }
 }
 
-async function first(campaignId) {
+async function firstWithUser(campaignId) {
     try {
         const campaign = await db.select(
             `${tableName}.id`,
@@ -127,9 +127,42 @@ async function publish(
     }
 }
 
+async function first(campaignId) {
+    try {
+        const res = await db.select('*')
+        .from(tableName)        
+        .where('id', campaignId)
+        .first()
+        .then((rows) => {        
+            return rows
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return res
+    } catch (err) {
+        return null
+    }
+}
+
+
+async function isCampaignExist(
+    campaignId
+) {
+    const res = await first(campaignId)
+
+    if(res == null | typeof res == "undefined") return false;
+    else return true
+}
+
+
+
 module.exports = {
     get,
     first,
+    firstWithUser,
     create,
-    publish
+    publish,
+    isCampaignExist
 }

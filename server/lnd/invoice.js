@@ -1,8 +1,55 @@
+const { initLNRPC }  = require('../lnd/lnd')
+const { uint8ArrayToHex } = require('../helpers/util.helper')
+const { newInvoice, paidInvoice } = require('../services/deposit')
 
+// Invoice Status
+const OPEN = 'OPEN'
+const SETTLED = 'SETTLED'
 
+async function subscribeInvoices() {
+    const client = await initLNRPC('LIGHTNING')
+    let call = client.subscribeInvoices({});
+    call.on('data', function(invoice) {
+		processInvoice(invoice)
+	})
+	.on('end', function() {
+        // The server has finished sending
+		console.log('subs invoices : server has finished sending')		
+	})
+	.on('status', function(status) {
+		// Process status
+		console.log("current status", status);
+	});
+}
 
+function processInvoice(invoice) {
+    // memo => description in LNURLP , refering to campaignId
+    // state => OPEN | SETTLED
+    // r_preimage => Invoicr Preimage
+    // value_msat => amount satoshi
+    // payment_request => invoice BOLT11
+    // settle_date
+    // creation_date
+    // r_hash => payment hash
 
+    const memo = invoice.description
+    const state = invoice.state
+    const rPreimageBuffered = invoice.r_preimage
+    const rPreimage = uint8ArrayToHex(rPreimageBuffered.data)
+    const valueMsat = invoice.value_msat
+    const paymentRequest = invoice.payment_request
+    const creationDate = invoice.creation_date
+    const settleDate = invoice.settle_date
+    const rHashBuffered = invoice.r_hash
+    const rHash = uint8ArrayToHex(rHashBuffered.data)
 
+    switch(state) {
+        case OPEN:
+            return newInvoice(memo, rPreimage, valueMsat, paymentRequest, creationDate)    
+        case SETTLED:
+            return paidInvoice(memo, rPreimage, rHash, settleDate)        
+    }
+}
 
 
 
@@ -34,3 +81,7 @@
 // ? Estimate Fee
 
 // Send Payment
+
+module.exports = {
+    subscribeInvoices
+}

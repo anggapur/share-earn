@@ -19,6 +19,9 @@ const clickCountDb = require('./database/click_count')
 const campaignRouter = require('./routes/campaign.router')
 const rewardRouter = require('./routes/reward.router')
 
+// Invoice
+const { subscribeInvoices } = require('./lnd/invoice')
+
 
 const fs = require('fs');
 const grpc = require('@grpc/grpc-js');
@@ -297,7 +300,12 @@ function hexToBytes(hexString) {
 // 		console.log('Err >> ', err)
 // 		console.log('EstimateRouteFee >> ',response);
 // 	  });
-// })()
+
+// Initiate to subscribe Invoices
+(async() => {
+	console.log('Hello!')
+	await subscribeInvoices()	
+})()
 
 app.use(
     cors({
