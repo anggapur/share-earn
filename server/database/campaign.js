@@ -112,7 +112,8 @@ async function updateLNURLP(
         const campaign = await db(tableName)
         .where(`${tableName}.id`, campaignId)
         .update({
-            lnurl_pay: lnurlp
+            lnurl_pay: lnurlp,
+            status: PUBLISHED
         })
         .then((ids) => {        
             return ids
