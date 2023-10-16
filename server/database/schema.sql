@@ -35,7 +35,7 @@ CREATE TABLE db_sharearn.campaigns (
 
 INSERT INTO db_sharearn.campaigns (id, user_id, title, thumbnail, description, original_content_url, reward_per_click, lnurl_pay, status, tags) 
 VALUES 
-(1, 1, "Campaign 1", "thumb1.png", "Description...", "https://www.w3schools.com/mysql/mysql_insert.asp", 1000, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7WZ6WEX5GJCZTXF8E",2, "tag1|tag2|tag3"),
+(1, 1, "Campaign 1", "thumb1.png", "Description...", "https://www.w3schools.com/mysql/mysql_insert.asp", 1000, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7WZ6WEX5GJCZTXF8E",1, "tag1|tag2|tag3"),
 (2, 1, "Campaign 2", "thumb1.png", "Description...", "https://stackoverflow.com/questions/6889065/inserting-multiple-rows-in-mysql", 500, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ74M5DA9YYKQ9R6EJY",1, "tag5"),
 (3, 1, "Campaign 3", "thumb1.png", "Description...", "https://dev.mysql.com/doc/refman/8.0/en/integer-types.html", 100, "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7E6NDEP8VEQY64S3M",0, "tag1|tag2|tag4");
 
