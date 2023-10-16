@@ -75,8 +75,7 @@ async function create(
 	thumbnail,
 	description,
 	originalContentUrl,
-	rewardPerClick,
-	lnurlPay,		
+	rewardPerClick,	
 	tags,
 ) {
     try {
@@ -87,10 +86,33 @@ async function create(
             thumbnail: thumbnail,
             description: description,
             original_content_url: originalContentUrl,
-            reward_per_click: rewardPerClick,
-            lnurl_pay: lnurlPay,
+            reward_per_click: rewardPerClick,            
             status: CREATED,
             tags: tags,
+        })
+        .then((ids) => {        
+            return ids
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return campaign
+    } catch (err) {
+        return null
+    }
+}
+
+
+async function updateLNURLP(    
+    campaignId,
+	lnurlp
+) {
+    try {
+        const campaign = await db(tableName)
+        .where(`${tableName}.id`, campaignId)
+        .update({
+            lnurl_pay: lnurlp
         })
         .then((ids) => {        
             return ids
@@ -164,5 +186,6 @@ module.exports = {
     firstWithUser,
     create,
     publish,
-    isCampaignExist
+    isCampaignExist,
+    updateLNURLP
 }

@@ -47,13 +47,14 @@ async function getTotalPendingClaim(userId) {
     }
 }
 
-async function updateClaimToSuccess(claimId) {
+async function updateClaimToSuccess(claimId, paymentHash) {
     try {
         const updated = await db
         .from(tableName)  
         .where('id', claimId)     
         .update({
-            status: SUCCESS
+            status: SUCCESS,
+            payment_hash: paymentHash
         })
         .then((result) => {                
             return result
