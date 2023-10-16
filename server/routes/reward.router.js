@@ -7,7 +7,10 @@ const router = express.Router();
 
 const userDb = require('../database/user')
 const claimedRewardDb = require('../database/claimed_reward')
-const clickCountDb = require('../database/click_count')
+const clickCountDb = require('../database/click_count');
+
+const { paidClaim } = require('../services/payment')
+
 
 // Get rewards
 router.get('/', authMiddleware, async (req, res, next) => {
@@ -21,8 +24,8 @@ router.get('/', authMiddleware, async (req, res, next) => {
     const rewards = await claimedRewardDb.getClaimedRewards(user.id, page, perPage)
 
     return res.status(200).send({
-        data : {
-            rows : rewards,
+        data: {
+            rows: rewards,
             page,
             perPage
         },
@@ -34,10 +37,10 @@ router.get('/', authMiddleware, async (req, res, next) => {
 router.get('/info', authMiddleware, async (req, res, next) => {
     // Get User Id
     const user = await userDb.first(req.user.id)
-    if(user == null || typeof user == "undefined") {
+    if (user == null || typeof user == "undefined") {
         return res.status(400).send({
-            errCode: 'ERR_AUTH', 
-            message: "Error unknown user" 
+            errCode: 'ERR_AUTH',
+            message: "Error unknown user"
         })
     }
 
@@ -62,63 +65,78 @@ router.get('/info', authMiddleware, async (req, res, next) => {
 router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
 
     const {
-        amount,
+        amount, // in milisatoshi
         paymentDestinationType,
         paymentDestination,
     } = req.body
-      // Get User Id
-      const user = await userDb.first(req.user.id)
-      if(user == null || typeof user == "undefined") {
+    // Get User Id
+    const user = await userDb.first(req.user.id)
+    if (user == null || typeof user == "undefined") {
         return res.status(400).send({
-            errCode: 'ERR_AUTH', 
-            message: "Error unknown user" 
+            errCode: 'ERR_AUTH',
+            message: "Error unknown user"
         })
-      }
-      
-      // check is valid paymentDestination
-      const isValid = await validatePaymentDestinationType(paymentDestinationType, paymentDestination);
-      if(!isValid) {
+    }
+
+    // check is valid paymentDestination
+    const isValid = await validatePaymentDestinationType(paymentDestinationType, paymentDestination);
+    if (!isValid) {
         return res.status(400).send({
-            errCode: 'ERR_CLAIM', 
-            message: "Error parsing payment" 
+            errCode: 'ERR_CLAIM',
+            message: "Error parsing payment"
         })
-      }
+    }
 
-      // check is total unclaimed rewards sufficient to claim
-      const totalRewards = await clickCountDb.getTotalRewardByUserId(user.id)
-      const totalPendingClaims = await claimedRewardDb.getTotalPendingClaim(user.id)
-      const totalSuccessClaims = await claimedRewardDb.getTotalSuccessClaim(user.id)
-      const totalUnclaimedRewards = parseInt(totalRewards) - (parseInt(totalPendingClaims) + parseInt(totalSuccessClaims))
+    // check is total unclaimed rewards sufficient to claim
+    const totalRewards = await clickCountDb.getTotalRewardByUserId(user.id)
+    const totalPendingClaims = await claimedRewardDb.getTotalPendingClaim(user.id)
+    const totalSuccessClaims = await claimedRewardDb.getTotalSuccessClaim(user.id)
+    const totalUnclaimedRewards = parseInt(totalRewards) - (parseInt(totalPendingClaims) + parseInt(totalSuccessClaims))
 
-      if( parseInt(amount) > totalUnclaimedRewards) {
+    if (parseInt(amount) > totalUnclaimedRewards) {
         return res.status(400).send({
-            errCode: 'ERR_CLAIM', 
-            message: "Error insufficient rewards balance to be claimed" 
+            errCode: 'ERR_CLAIM',
+            message: "Error insufficient rewards balance to be claimed"
         })
-      }    
+    }
 
-      // insert claim
-      const claim = await claimedRewardDb.claim(
-        user.id,    
+    // insert claim
+    const claim = await claimedRewardDb.claim(
+        user.id,
         paymentDestinationType,
         paymentDestination,
         amount
-      )
-      if(claim == null || typeof claim == "undefined") {
+    )
+    if (claim == null || typeof claim == "undefined") {
         return res.send(500).send({
-            errCode: 'ERR_CLAIM', 
-            message: "Error claim rewards" 
+            errCode: 'ERR_CLAIM',
+            message: "Error claim rewards"
         })
-      }
+    }
 
-      return res.send(201).send({            
-        data : {
+    // check payment destination type
+    let paymentHash;
+    try {
+        paymentHash = await paidClaim(paymentDestinationType, paymentDestination, totalUnclaimedRewards, parseInt(amount))
+    } catch (err) {
+        return res.status(500).send({
+            errCode: 'ERR_CLAIM',
+            message: (new Error(err)).toString()
+        })
+    }
+
+    // @TODO Update status of payment
+    const claimId = claim[0]
+    const update = await claimedRewardDb.updateClaimToSuccess(claimId, paymentHash)
+
+    return res.send(201).send({
+        data: {
             amount,
             paymentDestinationType,
             paymentDestination,
             userId: user.id
         },
-        message : "Success to claim rewards"
+        message: "Success to claim rewards"
     })
 
 
