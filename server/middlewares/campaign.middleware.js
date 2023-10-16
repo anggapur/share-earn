@@ -6,8 +6,7 @@ const createCampaign = validation.validate([
     body('thumbnail').exists(),
     body('description').exists(),
     body('originalContentUrl').exists(),
-    body('rewardPerClick').exists(),
-    body('lnurlPay').exists(),
+    body('rewardPerClick').exists(),    
     body('tags').isArray().exists(),
 ]);
 

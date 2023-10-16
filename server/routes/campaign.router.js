@@ -10,6 +10,9 @@ const campaignDb = require('../database/campaign')
 const shareableUrlDb = require('../database/shareable_url')
 
 
+const { createLNURLP } = require('../lnd/lnurlp')
+
+
 
 // Get campaigns
 router.get('/', async (req, res, next) => {
@@ -38,7 +41,7 @@ router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
         description,
         originalContentUrl,
         rewardPerClick,
-        lnurlPay,
+        
         tags
     } = req.body
 
@@ -54,13 +57,30 @@ router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
         thumbnail,
         description,
         originalContentUrl,
-        rewardPerClick,
-        lnurlPay,		
+        rewardPerClick,        
         encodedTags
     )
+    if(createNewCampaign == null) {
+        return res.status(500).send({ 
+            errCode: 'ERR_CAMPAIGN_CREATION', 
+            message: "Error insert new campaign" 
+        })
+    }
+
+    // Create LNURLP and update campaign
+    const campaignId = createNewCampaign[0]
+    const lnurlp = createLNURLP(campaignId, 1, 1_000_000_000_000)
+    const update = await campaignDb.updateLNURLP(lnurlp)
+    if(update == null) {
+        return res.status(500).send({ 
+            errCode: 'ERR_CAMPAIGN_CREATION', 
+            message: "Error update campaign's lnurlp" 
+        })
+    }
+
 
     if(createNewCampaign !== null && createNewCampaign.length > 0) {
-        res.status(200).send({            
+        return res.status(200).send({            
             data : {
                 userId: user.id,
                 title,
