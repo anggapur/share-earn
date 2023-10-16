@@ -19,6 +19,9 @@ const LNURLP_TYPE = 2
 const LND_GRPC = process.env.LND_GRPC
 const LND_MACAROON_PATH = process.env.LND_MACAROON_PATH
 
+const LNBITS_ENDPOINT = process.env.LNBITS_ENDPOINT
+const LNBITS_ADMIN_KEY = process.env.LNBITS_ADMIN_KEY
+
 module.exports = {
     HTTPS,
     HOSTNAME,
@@ -34,5 +37,7 @@ module.exports = {
     LN_EMAIl_TYPE,
     LNURLP_TYPE,
     LND_GRPC,
-    LND_MACAROON_PATH
+    LND_MACAROON_PATH,
+    LNBITS_ENDPOINT,
+    LNBITS_ADMIN_KEY
 }
