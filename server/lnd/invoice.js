@@ -90,5 +90,6 @@ async function decodeInvoice(bolt11Invoice) {
 // Send Payment
 
 module.exports = {
+    subscribeInvoices,
     decodeInvoice,
 }
