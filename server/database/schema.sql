@@ -24,7 +24,7 @@ CREATE TABLE db_sharearn.campaigns (
 	description text NULL,
 	original_content_url varchar(150) NULL,
 	reward_per_click BIGINT default(0),
-	lnurl_pay varchar(255) UNIQUE,	
+	lnurl_pay varchar(255) UNIQUE NULL,	
 	status tinyint,
 	tags text,
 	PRIMARY KEY (id),
@@ -104,6 +104,7 @@ CREATE TABLE db_sharearn.claimed_rewards (
 	status tinyint,
 	payment_destination_type tinyint,
 	payment_destination varchar(250),
+	payment_hash varchar(250) NULL,
 	amount BIGINT default(0),
 	PRIMARY KEY (id),
 	FOREIGN KEY (user_id) REFERENCES users(id),
@@ -111,8 +112,8 @@ CREATE TABLE db_sharearn.claimed_rewards (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
-INSERT INTO db_sharearn.claimed_rewards (id, user_id, status, payment_destination_type, payment_destination, amount)
+INSERT INTO db_sharearn.claimed_rewards (id, user_id, status, payment_destination_type, payment_destination, payment_hash, amount)
 VALUES
-(1, 2, 1, 1, "kitchenquail33@walletofsatoshi.com", 3000)
+(1, 2, 1, 1, "kitchenquail33@walletofsatoshi.com", "907bti7n8kilobt7r", 3000)
 
 	
