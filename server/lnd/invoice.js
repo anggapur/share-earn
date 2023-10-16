@@ -58,6 +58,29 @@ async function decodeInvoice(bolt11Invoice) {
     return result
 }
 
+async function payInvoice(bolt11Invoice) {
+    const client = await initLNRPC('LIGHTNING')
+    const sendPaymentSync= (bolt11Invoice) => {
+        return new Promise((resolve, reject) => {
+            const request = {
+                payment_request: bolt11Invoice
+            }
+            client.sendPaymentSync(request, function(err, response) {
+                if(err) {
+                    reject(err)
+                } else {
+                    console.log(`SEND PAYMENT RESP >> ${JSON.stringify(response)}`)
+                    resolve(response)
+                }
+            });
+        })
+    }
+
+    const pay = await sendPaymentSync(bolt11Invoice)
+    return pay
+}
+
+
 
 
 // #1 To support Publisher Fund Deposit
@@ -92,4 +115,5 @@ async function decodeInvoice(bolt11Invoice) {
 module.exports = {
     subscribeInvoices,
     decodeInvoice,
+    payInvoice
 }
