@@ -2,8 +2,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 20px;
   }
   
+  .publisher {
+    font-size: 14px;
+  }
+
+  .tagTitle {
+    font-size: 12px;
+    margin-top: 20px;
+  }
+
+  .createdAt {
+    color: #757272;
+    font-size: 12px;
+  }
+
   .postContainer {
     display: flex;
     flex-direction: column;

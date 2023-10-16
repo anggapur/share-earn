@@ -7,6 +7,7 @@ import Post from "./components/post/Post";
 import Paywall from "./components/paywall/Paywall";
 import { useEffect, useState } from "react";
 import Axios from "axios";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,8 +19,7 @@ function App() {
       withCredentials: true,
       url: "http://localhost:3001/user",
     }).then((res) => {
-      res.data.id ? setUser(res.data.id) : setUser(null);
-      console.log(res);
+      res.data.id ? setUser(res.data.id) : setUser(null);      
     })
   })
 
@@ -50,7 +50,7 @@ function App() {
     <div>
       <nav>
         <h2 className="navTitle" onClick={navigateHome}>
-          Lightning Blog
+          SharEarn
         </h2>
         <div className="cpLayout" onClick={navigateCreatePost}>
           <MdPostAdd className="cpIcon" />
