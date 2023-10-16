@@ -2,6 +2,8 @@ const { initLNRPC }  = require('../lnd/lnd')
 const { uint8ArrayToHex } = require('../helpers/util.helper')
 const { newInvoice, paidInvoice } = require('../services/deposit')
 
+const lightningPayReq = require('bolt11')
+
 // Invoice Status
 const OPEN = 'OPEN'
 const SETTLED = 'SETTLED'
@@ -51,6 +53,11 @@ function processInvoice(invoice) {
     }
 }
 
+async function decodeInvoice(bolt11Invoice) {
+    const result = lightningPayReq.decode(bolt11Invoice);
+    return result
+}
+
 
 
 // #1 To support Publisher Fund Deposit
@@ -83,5 +90,5 @@ function processInvoice(invoice) {
 // Send Payment
 
 module.exports = {
-    subscribeInvoices
+    decodeInvoice,
 }
