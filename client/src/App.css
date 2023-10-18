@@ -43,4 +43,11 @@ nav {
       width: 200px; 
       height: 1.2em; 
       white-space: nowrap;
-    }
+  }
+  .labelLoggedIn {
+    margin-right: 25px;
+  }
+
+  .nav {
+    background-color: orange !important;
+  }
