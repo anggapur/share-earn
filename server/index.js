@@ -4,6 +4,7 @@ const passport = require('passport');
 const session = require('express-session');
 const cors = require("cors");
 const path = require("path");
+const crypto = require('crypto');
 
 const config = require('./config/config');
 
@@ -28,6 +29,12 @@ const { subscribeInvoices } = require('./lnd/invoice');
 	console.log('Hello!')
 	await subscribeInvoices()	
 })()
+
+// parse json request body
+app.use(express.json());
+// parse urlencoded request body
+app.use(express.urlencoded({ extended: true }));
+
 
 app.use(
     cors({
@@ -98,7 +105,8 @@ app.get('/login',
 				// Check user
 				const isUserRegistered = await userDb.isUserExist(req.user.id)
 				if(!isUserRegistered) {
-					await userDb.create(req.user.id)
+					const token = crypto.randomBytes(20).toString('hex');
+					await userDb.create(req.user.id, token)
 				}
 			}
 			// Already authenticated.
@@ -115,8 +123,14 @@ app.get('/login',
 	})
 );
 
-app.get("/user", (req, res) => {
-    res.send(req.user);
+app.get("/user", async (req, res) => {
+	const pubkey = req.user.id
+	const getUser = await userDb.first(pubkey)
+	const response = {
+		id : pubkey,
+		token : getUser.token
+	}
+    res.send(response);
 })
 
 app.get('/logout',

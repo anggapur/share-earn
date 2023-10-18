@@ -8,18 +8,30 @@ import Paywall from "./components/paywall/Paywall";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import config from './config/config'
 
 function App() {
   const [user, setUser] = useState(null);
   let navigate = useNavigate();
 
   useEffect(() => {
+
+    const setLocalStorage = (res) => {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user_id', res.data.id);
+      setUser(res.data.id)
+    }
+
+    const unsetLocalStorage = () => {
+      setUser(null)
+    }
+
     Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/user",
+      url: `${config.SERVER_URL}/user`,
     }).then((res) => {
-      res.data.id ? setUser(res.data.id) : setUser(null);      
+      res.data.id ? setLocalStorage(res) : unsetLocalStorage();      
     })
   })
 
