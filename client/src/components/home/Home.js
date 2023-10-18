@@ -7,13 +7,14 @@ import Badge from 'react-bootstrap/Badge';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import config from '../../config/config'
 
 function Home() {
   const [postList, setPostList] = useState([]);
 
   useEffect(() => {
     const getPosts = async () => {
-      const res = await fetch("http://localhost:3001/api/v1/campaigns");
+      const res = await fetch(`${config.SERVER_URL}/api/v1/campaigns`);
       const data = await res.json();
       const posts = data.data.rows;      
       setPostList(posts);
@@ -46,7 +47,7 @@ function Home() {
 
   const ArticleCard = ({ id, thumbnail, title, publisher, description, rewards, tags, onclick }) => {    
     return (
-      <Card key={id} onClick={onclick}>
+      <Card key={id} onClick={onclick} className="pointer">
         <Card.Img variant="top" src={thumbnail} alt={title} />
         <Card.Body>
           <Card.Title>{title}</Card.Title>

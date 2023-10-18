@@ -77,3 +77,6 @@
     padding: 5px;
     border-radius: 7px;
   }
+  .pointer {
+    cursor: pointer;
+  }
