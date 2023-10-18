@@ -1,0 +1,51 @@
+.postPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+  }
+  
+  .publisher {
+    font-size: 14px;
+  }
+
+  .tagTitle {
+    font-size: 12px;
+    margin-top: 20px;
+  }
+
+  .createdAt {
+    color: #757272;
+    font-size: 12px;
+  }
+
+  .postContainer {
+    display: flex;
+    flex-direction: column;
+    width: 70vw;
+    height: calc(100vh - 80px);
+    background-color: white;
+  }
+  
+  .postTitle {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .postText {
+    margin-left: 10vh;
+    margin-right: 10vh;
+    word-wrap: break-word;
+    height: auto;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+  .btn-copy {
+    margin-left: 5px;
+  }
+
+  .margin-25 {
+    margin-top: 25px;
+  }

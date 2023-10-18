@@ -42,6 +42,47 @@ async function getUrlByIdAndUser(
     }
 }
 
+async function getUrlsByCampaignId(
+    campaignId    
+) {
+    try {
+        const clickCountsSQ = db
+        .select(
+            `click_counts.shareable_url_id`,                
+        )
+        .from('click_counts')
+        .whereIn('shareable_url_id', function() {
+            this.select('id').from('shareable_urls').where('campaign_id', campaignId)
+        })
+        .groupBy('shareable_url_id')
+        .count('click_counts.id as total_click_count')
+        .as('clickCounts');
+    
+
+        const campaign = await db.select(
+          `${tableName}.*`,
+          `users.public_key`,
+          'clickCounts.total_click_count'
+        )
+        .from(tableName)    
+        .leftJoin('users', `${tableName}.user_id`, 'users.id')   
+        .leftJoin(clickCountsSQ, 'shareable_urls.id', 'clickCounts.shareable_url_id') 
+        .where({
+            campaign_id: campaignId,            
+        })        
+        .then((rows) => {        
+            return rows
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return campaign
+    } catch (err) {
+        return null
+    }
+}
+
 async function create(   
     campaignId,
     userId, 
@@ -150,5 +191,6 @@ module.exports = {
     getUrlByIdAndUser,
     isURLExist,
     getCampaignByUrl,
-    getDetailEachURLByUserId
+    getDetailEachURLByUserId,
+    getUrlsByCampaignId
 }

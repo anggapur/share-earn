@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCampaigns } = require('../middlewares/users.middleware')
+const { getCampaigns, getCampaignUrls, } = require('../middlewares/users.middleware')
 
 const router = express.Router();
 const userDb = require('../database/user')
@@ -24,6 +24,36 @@ router.get('/campaigns', getCampaigns, async (req, res, next) => {
         return res.status(200).send({
             data : {
                 rows : campaigns
+            },
+            message: "Success get campaigns"
+        })
+    }    
+})
+
+router.get('/campaign/:campaignId/urls', getCampaignUrls, async (req, res, next) => {    
+    const {
+        campaignId
+    } = req.params
+    
+    const {
+        authorization: token
+    } = req.headers
+
+    // Get User Id
+    const user = await userDb.firstByToken(token) 
+
+    // Get campaign    
+    const urls = await shareableUrlDb.getUrlsByCampaignId(campaignId)    
+    
+    if(urls == null || typeof urls == "undefined") {
+        return res.status(400).send({ 
+            errCode: 'ERR_URLS_CAMPAIGN', 
+            message: "Campaign not exist" 
+        })
+    } else {
+        return res.status(200).send({
+            data : {
+                rows : urls
             },
             message: "Success get campaigns"
         })
