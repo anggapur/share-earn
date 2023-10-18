@@ -22,6 +22,8 @@ const LND_MACAROON_PATH = process.env.LND_MACAROON_PATH
 const LNBITS_ENDPOINT = process.env.LNBITS_ENDPOINT
 const LNBITS_ADMIN_KEY = process.env.LNBITS_ADMIN_KEY
 
+const SERVER_URL = process.env.SERVER_URL
+
 module.exports = {
     HTTPS,
     HOSTNAME,
@@ -39,5 +41,6 @@ module.exports = {
     LND_GRPC,
     LND_MACAROON_PATH,
     LNBITS_ENDPOINT,
-    LNBITS_ADMIN_KEY
+    LNBITS_ADMIN_KEY,
+    SERVER_URL
 }
