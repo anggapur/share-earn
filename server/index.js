@@ -98,6 +98,7 @@ app.get('/', function(req, res) {
 
 app.use('/api/v1/campaigns', campaignRouter)
 app.use('/api/v1/rewards', rewardRouter)
+app.use('/api/v1/users', usersRouter)
 
 app.get('/login',
 	async function(req, res, next) {

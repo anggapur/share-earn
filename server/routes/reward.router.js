@@ -1,5 +1,5 @@
 const express = require('express');
-const { claimReward } = require('../middlewares/reward.middleware')
+const { claimReward, infoReward, getReward  } = require('../middlewares/reward.middleware')
 const authMiddleware = require('../middlewares/auth.middleware')
 const { validatePaymentDestinationType } = require('../helpers/validation.helper')
 
@@ -13,14 +13,19 @@ const { paidClaim } = require('../services/payment')
 
 
 // Get rewards
-router.get('/', authMiddleware, async (req, res, next) => {
+router.get('/', getReward , async (req, res, next) => {
     let { page, perPage } = req.params
 
     page = page ?? 1
     perPage = perPage ?? 10
 
     // Get User Id
-    const user = await userDb.first(req.user.id)
+    const {
+        authorization: token
+    } = req.headers
+
+    // Get User Id
+    const user = await userDb.firstByToken(token)  
     const rewards = await claimedRewardDb.getClaimedRewards(user.id, page, perPage)
 
     return res.status(200).send({
@@ -34,9 +39,13 @@ router.get('/', authMiddleware, async (req, res, next) => {
 })
 
 
-router.get('/info', authMiddleware, async (req, res, next) => {
+router.get('/info', infoReward, async (req, res, next) => {
+    const {
+        authorization: token
+    } = req.headers
+
     // Get User Id
-    const user = await userDb.first(req.user.id)
+    const user = await userDb.firstByToken(token)        
     if (user == null || typeof user == "undefined") {
         return res.status(400).send({
             errCode: 'ERR_AUTH',
@@ -62,15 +71,19 @@ router.get('/info', authMiddleware, async (req, res, next) => {
 
 })
 
-router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
-
+router.post('/claim', claimReward, async (req, res, next) => {
     const {
-        amount, // in milisatoshi
+        amount, // in satoshi
         paymentDestinationType,
         paymentDestination,
     } = req.body
+
+    const {
+        authorization: token
+    } = req.headers    
+
     // Get User Id
-    const user = await userDb.first(req.user.id)
+    const user = await userDb.firstByToken(token) 
     if (user == null || typeof user == "undefined") {
         return res.status(400).send({
             errCode: 'ERR_AUTH',
@@ -78,12 +91,14 @@ router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
         })
     }
 
+    const amountInMilisatoshi = parseInt(amount) * 1000
+
     // check is valid paymentDestination
     const isValid = await validatePaymentDestinationType(paymentDestinationType, paymentDestination);
     if (!isValid) {
         return res.status(400).send({
             errCode: 'ERR_CLAIM',
-            message: "Error parsing payment"
+            message: "Error parsing payment destination"
         })
     }
 
@@ -93,7 +108,7 @@ router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
     const totalSuccessClaims = await claimedRewardDb.getTotalSuccessClaim(user.id)
     const totalUnclaimedRewards = parseInt(totalRewards) - (parseInt(totalPendingClaims) + parseInt(totalSuccessClaims))
 
-    if (parseInt(amount) > totalUnclaimedRewards) {
+    if (amountInMilisatoshi > totalUnclaimedRewards) {
         return res.status(400).send({
             errCode: 'ERR_CLAIM',
             message: "Error insufficient rewards balance to be claimed"
@@ -105,7 +120,7 @@ router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
         user.id,
         paymentDestinationType,
         paymentDestination,
-        amount
+        amountInMilisatoshi
     )
     if (claim == null || typeof claim == "undefined") {
         return res.send(500).send({
@@ -117,7 +132,7 @@ router.post('/claim', authMiddleware, claimReward, async (req, res, next) => {
     // check payment destination type
     let paymentHash;
     try {
-        paymentHash = await paidClaim(paymentDestinationType, paymentDestination, totalUnclaimedRewards, parseInt(amount))
+        paymentHash = await paidClaim(paymentDestinationType, paymentDestination, totalUnclaimedRewards, amountInMilisatoshi)
     } catch (err) {
         return res.status(500).send({
             errCode: 'ERR_CLAIM',

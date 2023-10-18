@@ -10,8 +10,12 @@ const getCampaignUrls = validation.validate([
     param('campaignId').exists()   
 ]);
 
+const getUrls = validation.validate([
+    header('Authorization').exists(),    
+]);
 
 module.exports = {
     getCampaigns,
     getCampaignUrls,
+    getUrls
 }

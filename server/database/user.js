@@ -30,13 +30,34 @@ async function first(publicKey) {
     }
 }
 
+async function firstByToken(token) {
+    try {
+        const res = await db.select('*')
+        .from(tableName)        
+        .where('token', token)
+        .first()
+        .then((rows) => {        
+            return rows
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return res
+    } catch (err) {
+        return null
+    }
+}
+
 async function create(    
-	publicKey
+	publicKey,
+    token
 ) {
     try {
         const res = await db(tableName)
         .insert({            
-	        public_key: publicKey
+	        public_key: publicKey,
+            token
         })
         .then((ids) => {        
             return ids
@@ -54,5 +75,6 @@ async function create(
 module.exports = {    
     first,
     create,
-    isUserExist
+    isUserExist,
+    firstByToken
 }
