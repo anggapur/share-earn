@@ -11,7 +11,8 @@ const createCampaign = validation.validate([
 ]);
 
 const createCampaignUrl = validation.validate([
-    body('campaignId').exists().isNumeric(),
+    header('Authorization').exists(),
+    body('campaignId').exists(),
 ]);
 
 module.exports = {

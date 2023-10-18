@@ -2,6 +2,7 @@ const express = require('express');
 const { createCampaign, createCampaignUrl } = require('../middlewares/campaign.middleware')
 const authMiddleware = require('../middlewares/auth.middleware')
 const { generateRandomHash } = require('../helpers/hash.helper')
+const config = require('../config/config')
 
 const router = express.Router();
 
@@ -125,13 +126,17 @@ router.get('/:campaignId', async (req, res, next) => {
 
 
 // Create url's campaign
-router.post('/url', authMiddleware, createCampaignUrl, async (req, res, next) => {
+router.post('/url', createCampaignUrl, async (req, res, next) => {
     const {
-        campaignId
+        campaignId,        
     } = req.body
 
+    const {
+        authorization: token
+    } = req.headers
+    
     // Get User Id
-    const user = await userDb.first(req.user.id)    
+    const user = await userDb.firstByToken(token)    
 
     // check if URL already generted
     const isURLExist = await shareableUrlDb.isURLExist(campaignId, user.id);
@@ -149,7 +154,7 @@ router.post('/url', authMiddleware, createCampaignUrl, async (req, res, next) =>
         return res.status(200).send({            
             data : {
                 campaignId,
-                urlHash: sharableUrl.url_hash,
+                urlHash: config.SERVER_URL+"/"+shareableUrl.url_hash,
                 userId: user.id
             },
             message : "Campaign's url already exist"
@@ -168,7 +173,7 @@ router.post('/url', authMiddleware, createCampaignUrl, async (req, res, next) =>
         res.status(201).send({            
             data : {
                 campaignId,
-                urlHash: newUrlHash,
+                urlHash: config.SERVER_URL+"/"+newUrlHash,
                 userId: user.id
             },
             message : "Success create new campaign's url"

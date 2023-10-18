@@ -42,4 +42,6 @@
     overflow: hidden;
     overflow-y: auto;
   }
-  
+  .btn-copy {
+    margin-left: 5px;
+  }

@@ -1,6 +1,6 @@
 import "./Post.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
@@ -9,13 +9,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 // import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLink , faMoneyBill, faUser} from '@fortawesome/free-solid-svg-icons';
-
+import { faExternalLink , faMoneyBill, faUser, faChain, faCheck} from '@fortawesome/free-solid-svg-icons';
+import clipboardCopy from 'clipboard-copy';
+import config from '../../config/config'
 
 function Post() {
   let navigate = useNavigate();
   const { state } = useLocation();
   const paid = localStorage.getItem("paid") || false;
+  const [isCopied, setIsCopied] = useState(false);
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     if (state.post.paywall === true && paid === false) {
@@ -26,6 +29,42 @@ function Post() {
         },
       });
     }
+
+    const token = localStorage.getItem('token');        
+
+    const getURL = async () => {
+      const res = await fetch(`${config.SERVER_URL}/api/v1/campaigns/url`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the content type to JSON if sending JSON data
+          'Authorization': token
+          // You can add additional headers here if needed
+        },
+        body: JSON.stringify({
+          campaignId: state.post.id
+        }) // Convert the data object to JSON string
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json(); // Parse the response JSON (if the response is in JSON format)
+        })
+        .then(responseData => {
+          // Handle the successful response data here          
+          setUrl(responseData.data.urlHash)
+        })
+        .catch(error => {
+          // Handle any errors that occurred during the fetch
+          console.error('POST request failed:', error);
+        });
+      const data = await res.json();
+           
+      setUrl("123")
+     
+    };        
+    getURL();
+
   }, [state.post, navigate, paid]);
 
   const ArticleDetail = ({ article }) => {
@@ -46,6 +85,15 @@ function Post() {
       const lastFourChars = inputString.substring(inputString.length - len);
       return firstFourChars+"..."+lastFourChars
     }
+
+    const handleCopy = () => {
+      clipboardCopy(url);
+      setIsCopied(true);
+
+      setTimeout(function() {
+        setIsCopied(false)
+      }, 2000);
+    };
   
     return (
       <div className="postPage">
@@ -82,6 +130,9 @@ function Post() {
                 <a href={original_content_url} className="btn btn-primary btn-sm">
                   <FontAwesomeIcon icon={faExternalLink} /> Go to Original Content
                 </a>
+                <button className="btn btn-secondary btn-sm btn-copy" onClick={handleCopy} disabled={ isCopied ? "disabled" : ""}>
+                  <FontAwesomeIcon icon={isCopied ? faCheck : faChain} /> { isCopied ? "Copied to Clipboard" : "Copy Link URL"}
+                </button>
               </Card.Text>
             </Card.Body>
           </Card>
