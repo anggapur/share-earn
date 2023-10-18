@@ -19,6 +19,7 @@ const clickCountDb = require('./database/click_count');
 // Routers
 const campaignRouter = require('./routes/campaign.router');
 const rewardRouter = require('./routes/reward.router');
+const usersRouter = require('./routes/users.router');
 
 // Invoice
 const { subscribeInvoices } = require('./lnd/invoice');

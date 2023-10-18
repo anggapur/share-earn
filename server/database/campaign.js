@@ -180,6 +180,37 @@ async function isCampaignExist(
 }
 
 
+async function getByUserId(userId) {
+    try {
+        const campaigns = await db.select(
+            `${tableName}.id`,
+            `${tableName}.title`,
+            `users.public_key as publisher`,
+            `${tableName}.thumbnail`,
+            `${tableName}.description`,
+            `${tableName}.original_content_url`,
+            `${tableName}.reward_per_click`,
+            `${tableName}.status`,
+            `${tableName}.tags`,
+            `${tableName}.created_at`,
+            `${tableName}.updated_at`
+        )
+        .from(tableName)
+        .leftJoin('users', `${tableName}.user_id`, 'users.id')
+        .where('user_id', userId)
+        .then((rows) => {        
+            return rows
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return campaigns
+    } catch (err) {
+        return null
+    }
+}
+
 
 module.exports = {
     get,
@@ -188,5 +219,6 @@ module.exports = {
     create,
     publish,
     isCampaignExist,
-    updateLNURLP
+    updateLNURLP,
+    getByUserId
 }
