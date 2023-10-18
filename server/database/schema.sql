@@ -4,16 +4,17 @@ use db_sharearn
 CREATE TABLE db_sharearn.users (
 	id INT auto_increment NOT NULL,
 	public_key varchar(250) NOT NULL,	
+	token varchar(200) NULL,
 	PRIMARY KEY (id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
-INSERT INTO db_sharearn.users (id, public_key) 
+INSERT INTO db_sharearn.users (id, public_key, token) 
 VALUES 
-(1, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8af50"),
-(2, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aEEE"),
-(3, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aFFF");
+(1, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8af50", "ABC1"),
+(2, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aEEE", "ABC2"),
+(3, "03b6e1d48eb543700f98c013b1051eef6e13af044754346fd5b8442a8546d8aFFF", "ABC3");
 
 
 CREATE TABLE db_sharearn.campaigns (
