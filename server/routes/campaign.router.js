@@ -52,6 +52,7 @@ router.post('/', createCampaign, async (req, res, next) => {
     // Get User Id
     const user = await userDb.firstByToken(token)
 
+    const rewardPerClickInMiliSatoshi = parseFloat(rewardPerClick) * 1000
     // Encode tags
     const encodedTags = tags.join('|')
 
@@ -61,7 +62,7 @@ router.post('/', createCampaign, async (req, res, next) => {
         thumbnail,
         description,
         originalContentUrl,
-        rewardPerClick,        
+        rewardPerClickInMiliSatoshi,        
         encodedTags
     )
     if(createNewCampaign == null) {
@@ -91,7 +92,7 @@ router.post('/', createCampaign, async (req, res, next) => {
                 thumbnail,
                 description,
                 originalContentUrl,
-                rewardPerClick,
+                rewardPerClick: rewardPerClickInMiliSatoshi,
                 lnurlPay: lnurlp.lnurl,		
                 tags
             },

@@ -150,7 +150,7 @@ function CreatePost() {
 
                       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                         <Form.Label>Reward per Click (in satoshi)</Form.Label>
-                        <Form.Control type="number" placeholder="Reward per Click" onChange={(event) => {
+                        <Form.Control type="number" placeholder="Reward per Click" step={"0.01"} onChange={(event) => {
                           setReward(event.target.value)
                         }}/>
                       </Form.Group>
