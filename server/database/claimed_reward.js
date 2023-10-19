@@ -4,6 +4,7 @@ const tableName = 'claimed_rewards'
 
 const PENDING = 0;
 const SUCCESS = 1;
+const FAILED = -1
 
 async function getTotalSuccessClaim(userId) {
     try {
@@ -69,6 +70,27 @@ async function updateClaimToSuccess(claimId, paymentHash) {
     }
 }
 
+async function updateClaimToFailed(claimId) {
+    try {
+        const updated = await db
+        .from(tableName)  
+        .where('id', claimId)     
+        .update({
+            status: FAILED,        
+        })
+        .then((result) => {                
+            return result
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return null
+        })    
+        return updated
+    } catch (err) {
+        return null
+    }
+}
+
 async function claim(   
     userId,    
     paymentDestinationType,
@@ -108,6 +130,7 @@ async function getClaimedRewards(
         .where({
             user_id: userId
         })
+        .whereIn('status', [PENDING, SUCCESS])
         .offset((page-1)*perPage)
         .limit(perPage)
         .then((rows) => {        
@@ -129,5 +152,6 @@ module.exports = {
    getTotalPendingClaim,
    getTotalSuccessClaim,
    updateClaimToSuccess,
-   getClaimedRewards
+   getClaimedRewards,
+   updateClaimToFailed
 }

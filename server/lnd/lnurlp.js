@@ -16,6 +16,10 @@ async function createLNURLP(campaignId, min, max) {
 
     const url = `${config.LNBITS_ENDPOINT}/lnurlp/api/v1/links`
 
+    console.log('URL >>> ', url)
+    console.log('config.LNBITS_ADMIN_KEY >> ', config.LNBITS_ADMIN_KEY)
+    console.log('data > ', data)
+
     const response = await axios.request({
         method: 'post',
         maxBodyLength: Infinity,
@@ -33,7 +37,7 @@ async function createLNURLP(campaignId, min, max) {
         console.log('LNURLP : Received a 500 Internal Server Error');        
         return null;
       } else {
-        console.log('LNURLP : ',JSON.stringify(response.data));
+        console.log('LNURLP ELSE : ',JSON.stringify(response.data));
         return null;
       }
   } catch (error) {
@@ -42,10 +46,14 @@ async function createLNURLP(campaignId, min, max) {
 }
 
 async function LNURLPtoInvoice(lnurlp, amountInSatoshi) {
+  console.log('utils.checkedToSats(amountInSatoshi) >> ', utils.checkedToSats(amountInSatoshi))
+  console.log('lnurlp >> ', lnurlp)
   const {invoice } = await requestInvoice({
 		lnUrlOrAddress: lnurlp,
-		tokens: utils.checkedToSats(amountInSatoshi), // in TS you can use utils.checkedToSats or utils.toSats
+		tokens: 1, // in TS you can use utils.checkedToSats or utils.toSats
 	})
+
+  console.log("END 1", invoice)
 
     return invoice
 }

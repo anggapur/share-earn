@@ -51,8 +51,8 @@ function Campaign() {
 
   const ArticleCard = ({ id, thumbnail, title, description, rewards, tags, onclick }) => {    
     return (
-      <Card key={id} onClick={onclick} className="pointer">
-        <Card.Img variant="top" src={thumbnail} alt={title} />
+      <Card key={id} onClick={onclick} className="pointer" style={{marginBottom: "20px"}}>
+        <Card.Img variant="top" src={thumbnail === "" || thumbnail == null ? "https://static.vecteezy.com/system/resources/thumbnails/005/048/106/small/black-and-yellow-grunge-modern-thumbnail-background-free-vector.jpg" : thumbnail} alt={title} />
         <Card.Body>
           <Card.Title>{title}</Card.Title>          
           <Card.Text>{shortDescription(description)}</Card.Text>

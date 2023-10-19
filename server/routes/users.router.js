@@ -72,6 +72,7 @@ router.get('/urls', getUrls, async (req, res, next) => {
     const user = await userDb.firstByToken(token) 
 
     // Get campaign    
+    console.log('USER > ', JSON.stringify(user))
     const urls = await shareableUrlDb.getDetailEachURLByUserId(user.id)    
 
     if(urls == null || typeof urls == "undefined") {

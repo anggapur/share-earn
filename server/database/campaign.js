@@ -23,6 +23,7 @@ async function get(page = 1, perPage = 10) {
         .from(tableName)
         .leftJoin('users', `${tableName}.user_id`, 'users.id')
         .offset((page-1)*perPage)
+        .orderBy('id', 'desc')
         .limit(perPage)
         .then((rows) => {        
             return rows

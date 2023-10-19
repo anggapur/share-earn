@@ -1,6 +1,6 @@
 import "./Post.css";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
@@ -13,59 +13,41 @@ import { faExternalLink , faMoneyBill, faUser, faChain, faCheck} from '@fortawes
 import clipboardCopy from 'clipboard-copy';
 import config from '../../config/config'
 
-function Post() {
-  let navigate = useNavigate();
-  const { state } = useLocation();
-  const paid = localStorage.getItem("paid") || false;
+function Post() {  
+  const { state } = useLocation();  
   const [isCopied, setIsCopied] = useState(false);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(null);
 
-  useEffect(() => {
-    if (state.post.paywall === true && paid === false) {
-      const paywallPost = state.post;
-      navigate("/paywall", {
-        state: {
-          paywallPost,
-        },
-      });
-    }
-
+  const getURL = async () => {
+    console.log('GET URL CLick')
     const token = localStorage.getItem('token');        
-
-    const getURL = async () => {
-      const res = await fetch(`${config.SERVER_URL}/api/v1/campaigns/url`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Set the content type to JSON if sending JSON data
-          'Authorization': token
-          // You can add additional headers here if needed
-        },
-        body: JSON.stringify({
-          campaignId: state.post.id
-        }) // Convert the data object to JSON string
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json(); // Parse the response JSON (if the response is in JSON format)
-        })
-        .then(responseData => {
-          // Handle the successful response data here          
-          setUrl(responseData.data.urlHash)
-        })
-        .catch(error => {
-          // Handle any errors that occurred during the fetch
-          console.error('POST request failed:', error);
-        });
-      const data = await res.json();
-           
-      setUrl("123")
-     
-    };        
-    getURL();
-
-  }, [state.post, navigate, paid]);
+    await fetch(`${config.SERVER_URL}/api/v1/campaigns/url`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Set the content type to JSON if sending JSON data
+        'Authorization': token
+        // You can add additional headers here if needed
+      },
+      body: JSON.stringify({
+        campaignId: state.post.id
+      }) // Convert the data object to JSON string
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json(); // Parse the response JSON (if the response is in JSON format)
+    })
+    .then(responseData => {
+      // Handle the successful response data here          
+      setUrl(responseData.data.urlHash)
+      clipboardCopy(responseData.data.urlHash);
+    })
+    .catch(error => {
+      // Handle any errors that occurred during the fetch
+      console.error('POST request failed:', error);
+    });      
+  };          
 
   const ArticleDetail = ({ article }) => {
     const {
@@ -87,7 +69,9 @@ function Post() {
     }
 
     const handleCopy = () => {
-      clipboardCopy(url);
+      if (url === null) {
+        getURL()      
+      }      
       setIsCopied(true);
 
       setTimeout(function() {
@@ -100,8 +84,8 @@ function Post() {
       <Container>
         <Row>   
         <Col xs lg="4">
-          <Card>
-            <Card.Img variant="top" src={thumbnail} alt={title} />
+          <Card cla>
+            <Card.Img variant="top" src={thumbnail === "" || thumbnail == null ? "https://static.vecteezy.com/system/resources/thumbnails/005/048/106/small/black-and-yellow-grunge-modern-thumbnail-background-free-vector.jpg" : thumbnail} alt={title} />
             <Card.Body>
               <Card.Title>{title}</Card.Title>
               <Card.Text className="createdAt">Created at: {created_at}</Card.Text>

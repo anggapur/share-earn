@@ -125,7 +125,11 @@ app.get('/login',
 	})
 );
 
-app.get("/user", async (req, res) => {
+app.get("/user", async (req, res) => {	
+	if(!req.user) {
+		return;
+	}
+
 	const pubkey = req.user.id
 	const getUser = await userDb.first(pubkey)
 	const response = {
@@ -147,15 +151,16 @@ app.get('/logout',
 	});
 
 
-app.get("/:urlHash", async function(req, res, next) {
+app.get("/url/:urlHash", async function(req, res, next) {
 	const { urlHash } = req.params
 	
+	console.log(urlHash)
 	// Check is URL Hash is exist
 	const shareableUrl = await shareableUrlDb.getCampaignByUrl(urlHash)		
 
 	if(shareableUrl == null || typeof shareableUrl == "undefined") {
 		return res.send("Invalid URL")
-	}
+	}	
 
 	const clientIP = req.connection.remoteAddress;	
 
@@ -168,6 +173,7 @@ app.get("/:urlHash", async function(req, res, next) {
 
 	// Redirect
 	return res.redirect(shareableUrl.original_content_url)
+
 });
 
 const server = app.listen(serverConfig.port, serverConfig.host, function() {

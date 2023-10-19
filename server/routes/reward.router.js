@@ -82,6 +82,8 @@ router.post('/claim', claimReward, async (req, res, next) => {
         authorization: token
     } = req.headers    
 
+    console.log('amount >> ', amount)
+
     // Get User Id
     const user = await userDb.firstByToken(token) 
     if (user == null || typeof user == "undefined") {
@@ -91,29 +93,44 @@ router.post('/claim', claimReward, async (req, res, next) => {
         })
     }
 
-    const amountInMilisatoshi = parseInt(amount) * 1000
+    console.log('parseInt(amount) >>> ', parseFloat(amount))
+    const amountInMilisatoshi = parseFloat(amount) * 1000
+    console.log('amountInMilisatoshi >>> ', amountInMilisatoshi)
 
     // check is valid paymentDestination
-    const isValid = await validatePaymentDestinationType(paymentDestinationType, paymentDestination);
-    if (!isValid) {
-        return res.status(400).send({
-            errCode: 'ERR_CLAIM',
+    try {
+        const isValid = await validatePaymentDestinationType(paymentDestinationType, paymentDestination);
+        console.log('Step 8')
+        if (!isValid) {
+            console.log('Step 9')
+            return res.status(400).send({
+                errCode: 'ERR_CLAIM',
+                message: "Error parsing payment destination"
+            })
+        }
+    } catch(err) {
+        return res.status(500).send({
+            errCode: 'ERR_PARSE_PAYMENT_DEST',
             message: "Error parsing payment destination"
         })
     }
 
+    console.log('Step 10')
     // check is total unclaimed rewards sufficient to claim
     const totalRewards = await clickCountDb.getTotalRewardByUserId(user.id)
     const totalPendingClaims = await claimedRewardDb.getTotalPendingClaim(user.id)
     const totalSuccessClaims = await claimedRewardDb.getTotalSuccessClaim(user.id)
     const totalUnclaimedRewards = parseInt(totalRewards) - (parseInt(totalPendingClaims) + parseInt(totalSuccessClaims))
 
+    console.log('Step 11')
     if (amountInMilisatoshi > totalUnclaimedRewards) {
         return res.status(400).send({
             errCode: 'ERR_CLAIM',
             message: "Error insufficient rewards balance to be claimed"
         })
     }
+
+    console.log('Step 12')
 
     // insert claim
     const claim = await claimedRewardDb.claim(
@@ -122,19 +139,28 @@ router.post('/claim', claimReward, async (req, res, next) => {
         paymentDestination,
         amountInMilisatoshi
     )
+
+    console.log('Step 13')
     if (claim == null || typeof claim == "undefined") {
-        return res.send(500).send({
+        return res.status(500).send({
             errCode: 'ERR_CLAIM',
             message: "Error claim rewards"
         })
     }
 
+    console.log('Step 14')
     // check payment destination type
     let paymentHash;
     try {
+        console.log('amountInMilisatoshi >> ', amountInMilisatoshi)
         paymentHash = await paidClaim(paymentDestinationType, paymentDestination, totalUnclaimedRewards, amountInMilisatoshi)
     } catch (err) {
-        return res.status(500).send({
+        
+        // Update tp Fail
+        const claimId = claim[0]
+        const update = await claimedRewardDb.updateClaimToFailed(claimId)
+
+        return res.status(500).send({            
             errCode: 'ERR_CLAIM',
             message: (new Error(err)).toString()
         })
@@ -142,9 +168,10 @@ router.post('/claim', claimReward, async (req, res, next) => {
 
     // @TODO Update status of payment
     const claimId = claim[0]
+    console.log('payment hash >> ', paymentHash)
     const update = await claimedRewardDb.updateClaimToSuccess(claimId, paymentHash)
 
-    return res.send(201).send({
+    return res.status(201).send({
         data: {
             amount,
             paymentDestinationType,

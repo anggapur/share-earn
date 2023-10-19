@@ -65,7 +65,7 @@ function MyCampaign() {
         <Row>   
         <Col xs lg="4">
           <Card>
-            <Card.Img variant="top" src={thumbnail} alt={title} />
+            <Card.Img variant="top" src={thumbnail === "" || thumbnail == null ? "https://static.vecteezy.com/system/resources/thumbnails/005/048/106/small/black-and-yellow-grunge-modern-thumbnail-background-free-vector.jpg" : thumbnail} alt={title} />
             <Card.Body>
               <Card.Title>{title}</Card.Title>
               <Card.Text className="createdAt">Created at: {created_at}</Card.Text>

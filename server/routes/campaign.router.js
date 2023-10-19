@@ -17,7 +17,7 @@ const { createLNURLP } = require('../lnd/lnurlp')
 
 // Get campaigns
 router.get('/', async (req, res, next) => {
-    let { page, perPage } = req.params
+    let { page, perPage } = req.query
 
     page = page ?? 1
     perPage = perPage ?? 10
@@ -35,19 +35,22 @@ router.get('/', async (req, res, next) => {
 })
 
 // Create campaign
-router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
+router.post('/', createCampaign, async (req, res, next) => {
     const {
         title,
         thumbnail,
         description,
         originalContentUrl,
-        rewardPerClick,
-        
+        rewardPerClick,        
         tags
     } = req.body
 
+    const {
+        authorization: token
+    } = req.headers        
+
     // Get User Id
-    const user = await userDb.first(req.user.id)
+    const user = await userDb.firstByToken(token)
 
     // Encode tags
     const encodedTags = tags.join('|')
@@ -70,8 +73,8 @@ router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
 
     // Create LNURLP and update campaign
     const campaignId = createNewCampaign[0]
-    const lnurlp = createLNURLP(campaignId, 1, 1_000_000_000_000)
-    const update = await campaignDb.updateLNURLP(lnurlp)
+    const lnurlp = await createLNURLP(campaignId, 1, 1_000_000_000)    
+    const update = await campaignDb.updateLNURLP(campaignId,lnurlp.lnurl)
     if(update == null) {
         return res.status(500).send({ 
             errCode: 'ERR_CAMPAIGN_CREATION', 
@@ -81,7 +84,7 @@ router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
 
 
     if(createNewCampaign !== null && createNewCampaign.length > 0) {
-        return res.status(200).send({            
+        return res.status(201).send({            
             data : {
                 userId: user.id,
                 title,
@@ -89,7 +92,7 @@ router.post('/', authMiddleware, createCampaign, async (req, res, next) => {
                 description,
                 originalContentUrl,
                 rewardPerClick,
-                lnurlPay,		
+                lnurlPay: lnurlp.lnurl,		
                 tags
             },
             message : "Success create new campaign"
@@ -154,14 +157,14 @@ router.post('/url', createCampaignUrl, async (req, res, next) => {
         return res.status(200).send({            
             data : {
                 campaignId,
-                urlHash: config.SERVER_URL+"/"+shareableUrl.url_hash,
+                urlHash: config.SERVER_URL+"/url/"+shareableUrl.url_hash,
                 userId: user.id
             },
             message : "Campaign's url already exist"
         })
     }
 
-    // Generate urlHash    
+    // Generate urlHash   
     const newUrlHash = generateRandomHash(16);
     const createCampaignUrl = await shareableUrlDb.create(
         campaignId,

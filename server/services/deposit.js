@@ -3,25 +3,26 @@ const topUpReward = require('../database/top_up_reward')
 
 async function newInvoice(campaignId, preimage, valueMsat, bolt11, creationDate) {
     // Check is campaignId exist
-    const isExist = await campaignDb.isCampaignExist(campaignDb)
-    if(isExist) {        
-        // Insert into top_up_rewards
-        const insert = await topUpReward.add(
-            campaignId,
-            bolt11,
-            preimage,                        
-            valueMsat,
-            creationDate
-        )
+    // const isExist = await campaignDb.isCampaignExist(campaignId)
+    // console.log("Campaign DB >>> ", campaignId)
+    // if(isExist) {        
+    //     // Insert into top_up_rewards
+    //     const insert = await topUpReward.add(
+    //         campaignId,
+    //         bolt11,
+    //         preimage,                        
+    //         valueMsat,
+    //         creationDate
+    //     )
 
-        if(insert !== null) {
-            return insert
-        } else {
-            throw new Error(`failed to add topup`)
-        }
-    } else {
-        throw new Error(`campaignId ${campaignId} is not exist`)
-    }
+    //     if(insert !== null) {
+    //         return insert
+    //     } else {
+    //         throw new Error(`failed to add topup`)
+    //     }
+    // } else {
+    //     throw new Error(`campaignId ${campaignId} is not exist`)
+    // }
 }
 
 async function paidInvoice(campaignId, preimage, paymentImage, settleDate) {

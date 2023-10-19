@@ -14,7 +14,7 @@ function Home() {
 
   useEffect(() => {
     const getPosts = async () => {
-      const res = await fetch(`${config.SERVER_URL}/api/v1/campaigns`);
+      const res = await fetch(`${config.SERVER_URL}/api/v1/campaigns?perPage=40`);
       const data = await res.json();
       const posts = data.data.rows;      
       setPostList(posts);
@@ -48,7 +48,7 @@ function Home() {
   const ArticleCard = ({ id, thumbnail, title, publisher, description, rewards, tags, onclick }) => {    
     return (
       <Card key={id} onClick={onclick} className="pointer">
-        <Card.Img variant="top" src={thumbnail} alt={title} />
+        <Card.Img variant="top" src={thumbnail === "" || thumbnail == null ? "https://static.vecteezy.com/system/resources/thumbnails/005/048/106/small/black-and-yellow-grunge-modern-thumbnail-background-free-vector.jpg" : thumbnail} alt={title} />
         <Card.Body>
           <Card.Title>{title}</Card.Title>
           <Card.Subtitle className="mb-2 text-muted">Published by: {cutPublisher(publisher)}</Card.Subtitle>
@@ -76,7 +76,7 @@ function Home() {
       <Container>
         <Row>        
           {postList.map((post) => {        
-            return <Col xs lg="4">
+            return <Col xs lg="3" style={{marginBottom: "15px"}}>
               {ArticleCard({ 
                 id: post.id,
                 thumbnail: post.thumbnail, 

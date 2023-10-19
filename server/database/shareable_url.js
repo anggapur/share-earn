@@ -112,22 +112,15 @@ async function create(
 async function getCampaignByUrl(urlHash) {
     try {
         const campaign = await db.select(
-            `campaigns.id`,
-            `campaigns.title`,            
-            `campaigns.thumbnail`,
-            `campaigns.description`,
-            `campaigns.original_content_url`,
-            `campaigns.reward_per_click`,
-            `campaigns.status`,
-            `campaigns.tags`,
-            `campaigns.created_at`,
-            `campaigns.updated_at`
+           `shareable_urls.*`,
+           `campaigns.reward_per_click`,
+           `campaigns.original_content_url`
         )
-        .from(tableName)        
+        .from(tableName)  
+        .join('campaigns', 'shareable_urls.campaign_id', 'campaigns.id')      
         .where({
             url_hash: urlHash            
-        })
-        .leftJoin('campaigns', `${tableName}.campaign_id`, 'campaigns.id')
+        })        
         .first()
         .then((rows) => {        
             return rows

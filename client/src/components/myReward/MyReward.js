@@ -88,6 +88,10 @@ function MyCampaign() {
       return <Badge pill bg="success">
         Success
       </Badge>
+    } else if (status === -1) {
+      return <Badge pill bg="danger">
+        Failed
+      </Badge>
     } else {
       return "-"
     }
@@ -116,9 +120,9 @@ function MyCampaign() {
     .then(function (res) {
       console.log('RES >>>> ', res)
     })
-    .catch(function (err) {      
+    .catch(function (err) {        
       const res = err.response.data
-      if(res.errCode === "ERR_CLAIM") {
+      if(res.errCode === "ERR_CLAIM" || res.errCode=== "ERR_PARSE_PAYMENT_DEST") {        
         setError(res.message)        
       } else if (res.errCode === "ERR_INPUT_1") {
         setError("Invalid Input")     
@@ -149,6 +153,13 @@ function MyCampaign() {
   const handleInputAmount = (event) => {    
     setAmountInSatoshi(event.target.value)
   };
+
+  const cutWords = (inputString) => {
+    const len = 16
+    const firstFourChars = inputString.substring(0, len);
+    const lastFourChars = inputString.substring(inputString.length - len);
+    return firstFourChars+"..."+lastFourChars
+  }
 
 
   return (
@@ -259,7 +270,7 @@ function MyCampaign() {
                     claimedRewards.map((el, index) => (
                       <tr key={index}>
                         <td>{index+1}</td>
-                        <td>{el.payment_destination}</td>
+                        <td>{cutWords(el.payment_destination)}</td>
                         <td>{getStatus(el.status)}</td>
                         <td>{parseInt(el.amount)/1000} satoshis</td>
                       </tr>  
