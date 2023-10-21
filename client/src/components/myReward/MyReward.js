@@ -119,6 +119,9 @@ function MyCampaign() {
     })
     .then(function (res) {
       console.log('RES >>>> ', res)
+      if(res.status >= 200 && res.status <= 299) {
+        setSuccess(res.data.message)
+      }
     })
     .catch(function (err) {        
       const res = err.response.data
@@ -135,6 +138,17 @@ function MyCampaign() {
   const setError = (msg) =>{
     setAlertMessage(msg)
     setAlertStatus("danger")
+
+    setTimeout(function() {
+      setAlertMessage(null)
+      setAlertStatus(null)
+    }, 2000);
+  }
+
+  const setSuccess = (msg) =>{
+    setShow(false)
+    setAlertMessage(msg)
+    setAlertStatus("success")
 
     setTimeout(function() {
       setAlertMessage(null)
@@ -176,7 +190,7 @@ function MyCampaign() {
         </Col>      
       </Row>
       <Row>
-        <Col xs lg="3">
+        <Col xs lg="3" style={{marginTop: "20px"}}>
           <Card>            
             <Card.Body>              
               <Card.Text>
@@ -227,7 +241,7 @@ function MyCampaign() {
             </Card.Footer>
           </Card>
         </Col>
-        <Col xs lg="9">
+        <Col xs lg="9" style={{marginTop: "20px"}}>
           <Card>
             <Card.Body>  
               <Card.Title>URLs</Card.Title>
