@@ -22,6 +22,7 @@ async function get(page = 1, perPage = 10) {
         )
         .from(tableName)
         .leftJoin('users', `${tableName}.user_id`, 'users.id')
+        .where('campaigns.status', PUBLISHED)
         .offset((page-1)*perPage)
         .orderBy('id', 'desc')
         .limit(perPage)
@@ -113,8 +114,7 @@ async function updateLNURLP(
         const campaign = await db(tableName)
         .where(`${tableName}.id`, campaignId)
         .update({
-            lnurl_pay: lnurlp,
-            status: PUBLISHED
+            lnurl_pay: lnurlp            
         })
         .then((ids) => {        
             return ids
@@ -193,6 +193,7 @@ async function getByUserId(userId) {
             `${tableName}.reward_per_click`,
             `${tableName}.status`,
             `${tableName}.tags`,
+            `${tableName}.lnurl_pay`,
             `${tableName}.created_at`,
             `${tableName}.updated_at`
         )
