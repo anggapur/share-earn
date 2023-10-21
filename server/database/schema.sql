@@ -44,7 +44,7 @@ VALUES
 CREATE TABLE db_sharearn.top_up_rewards (
 	id INT auto_increment NOT NULL,
 	campaign_id int,
-	bolt11 varchar(250) UNIQUE,
+	bolt11 text UNIQUE,
 	ln_preimage varchar(250) UNIQUE,
 	ln_payment_id varchar(250) UNIQUE NULL,
 	status tinyint,

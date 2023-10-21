@@ -37,20 +37,15 @@ async function paidClaim(paymentDestinationType, paymentDestination, totalUnclai
       const invoiceBolt11 = await getBolt11Invoice(paymentDestinationType, paymentDestination, totalUnclaimedRewards, amountInMiliSatoshi)
       const paid = await payInvoice(invoiceBolt11)
 
-      console.log('PAID 123')
-      console.log('paid', paid)
       if(paid == null || typeof paid == "undefined") {
         throw new Error('Fail to pay invoice')
-      }
+      }      
 
-      console.log('paid.payment_error >> ', paid.payment_error)
-
-      if(paid.payment_error) {        
+      if(paid.payment_error && paid.payment_error !== '') {        
         throw new Error(`Fail to pay invoice : ${paid.payment_error}`)
       }
-
-      console.log('PAID 1234')
-      const payment_hash = paid.payment_hash
+      
+      const payment_hash = paid.payment_hash;      
       return payment_hash
 
 }

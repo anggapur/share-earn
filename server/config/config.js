@@ -16,13 +16,17 @@ const INVOICE_TYPE = 0
 const LN_EMAIl_TYPE = 1
 const LNURLP_TYPE = 2
 
+const LND_TYPE = process.env.LND_TYPE
 const LND_GRPC = process.env.LND_GRPC
+const REST_HOST = process.env.REST_HOST
 const LND_MACAROON_PATH = process.env.LND_MACAROON_PATH
 
 const LNBITS_ENDPOINT = process.env.LNBITS_ENDPOINT
 const LNBITS_ADMIN_KEY = process.env.LNBITS_ADMIN_KEY
 
 const SERVER_URL = process.env.SERVER_URL
+
+const MEMO_PREFIX = process.env.MEMO_PREFIX
 
 module.exports = {
     HTTPS,
@@ -42,5 +46,8 @@ module.exports = {
     LND_MACAROON_PATH,
     LNBITS_ENDPOINT,
     LNBITS_ADMIN_KEY,
-    SERVER_URL
+    SERVER_URL,
+    REST_HOST,
+    LND_TYPE,
+    MEMO_PREFIX
 }

@@ -28,7 +28,7 @@ const { subscribeInvoices } = require('./lnd/invoice');
 // Initiate to subscribe Invoices
 (async() => {
 	console.log('Hello!')
-	await subscribeInvoices()	
+	await subscribeInvoices(config.LND_TYPE)
 })()
 
 // parse json request body
@@ -86,7 +86,6 @@ passport.use(new LnurlAuth.Strategy(function(linkingPublicKey, done) {
 }));
 
 app.use(passport.authenticate('lnurl-auth'));
-
 
 app.get('/', function(req, res) {
 	if (!req.user) {

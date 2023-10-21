@@ -177,7 +177,7 @@ router.post('/url', createCampaignUrl, async (req, res, next) => {
         res.status(201).send({            
             data : {
                 campaignId,
-                urlHash: config.SERVER_URL+"/"+newUrlHash,
+                urlHash: config.SERVER_URL+"/url/"+newUrlHash,
                 userId: user.id
             },
             message : "Success create new campaign's url"

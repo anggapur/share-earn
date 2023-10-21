@@ -10,7 +10,7 @@ async function createLNURLP(campaignId, min, max) {
       "description": campaignId,
       "max": max, // in satoshi
       "min": min, // in satoshi
-      "username": `campaign${campaignId}`,
+      "username": `${config.MEMO_PREFIX}${campaignId}`,
       "zaps": false
     });
 

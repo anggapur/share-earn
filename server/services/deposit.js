@@ -1,8 +1,15 @@
 const campaignDb = require('../database/campaign')
 const topUpReward = require('../database/top_up_reward')
+const config = require('../config/config')
 
+function modifyWord(originalString, substringToRemove ) {    
+    // Use a regular expression to remove all occurrences of the substring
+    const modifiedString = originalString.replace(new RegExp(substringToRemove, 'g'), '');
+    return modifiedString
+}
 async function newInvoice(campaignId, preimage, valueMsat, bolt11, creationDate) {
     // Check is campaignId exist
+    campaignId = modifyWord(campaignId, config.MEMO_PREFIX)
     const isExist = await campaignDb.isCampaignExist(campaignId)
     console.log("Campaign DB >>> ", campaignId)
     if(isExist) {        
@@ -26,8 +33,7 @@ async function newInvoice(campaignId, preimage, valueMsat, bolt11, creationDate)
 }
 
 async function paidInvoice(campaignId, preimage, paymentImage, settleDate) {
-    // Check is campaignId exist
-
+    campaignId = modifyWord(campaignId, config.MEMO_PREFIX)
     // Check is campaignId exist
     const isExist = await campaignDb.isCampaignExist(campaignId)
     if(isExist) {  
