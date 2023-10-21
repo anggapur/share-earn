@@ -1,6 +1,6 @@
 import "./Post.css";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import React from 'react';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
@@ -9,14 +9,30 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 // import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLink , faMoneyBill, faUser, faChain, faCheck} from '@fortawesome/free-solid-svg-icons';
+import { faExternalLink , faMoneyBill, faUser, faChain, faCheck, faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 import clipboardCopy from 'clipboard-copy';
 import config from '../../config/config'
+import Axios from "axios";
 
 function Post() {  
   const { state } = useLocation();  
   const [isCopied, setIsCopied] = useState(false);
   const [url, setUrl] = useState(null);
+  const [user, setUser] = useState(null);  
+  
+  const navigateLogin = () => {
+    window.location.replace(`${config.SERVER_URL}/login`)
+  };
+
+  useEffect(() => {        
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `${config.SERVER_URL}/user`,
+    }).then((res) => {
+      res.data.id ? setUser(res.data.id) : setUser(null)
+    })
+  })
 
   const getURL = async () => {
     console.log('GET URL CLick')
@@ -114,12 +130,28 @@ function Post() {
                 <a href={original_content_url} className="btn btn-primary btn-sm">
                   <FontAwesomeIcon icon={faExternalLink} /> Go to Original Content
                 </a>
-                <button className="btn btn-secondary btn-sm btn-copy" onClick={handleCopy} disabled={ isCopied ? "disabled" : ""}>
-                  <FontAwesomeIcon icon={isCopied ? faCheck : faChain} /> { isCopied ? "Copied to Clipboard" : "Copy Link URL"}
-                </button>
+                {
+                  user !== null ? ( 
+                    <button className="btn btn-secondary btn-sm btn-copy" onClick={handleCopy} disabled={ isCopied ? "disabled" : ""}>                
+                      <FontAwesomeIcon icon={isCopied ? faCheck : faChain} /> { isCopied ? "Copied to Clipboard" : "Copy Shareable URL"}
+                    </button>
+                  ): <></>
+                }               
               </Card.Text>
             </Card.Body>
           </Card>
+          {
+            user === null ? (
+              <Card style={{marginTop: "20px"}}>
+                <Card.Body>
+                  <Card.Text>You can help to spread this campaign! But please login first.</Card.Text>
+                    <button className="btn btn-secondary btn-sm btn-copy" onClick={navigateLogin}>                
+                      <FontAwesomeIcon icon={faRightFromBracket} /> Login
+                    </button>
+                </Card.Body>
+              </Card>
+            ) : <></>
+          }
         </Col>
       </Row>
       </Container>      
