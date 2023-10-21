@@ -29,14 +29,19 @@ async function paidInvoice(campaignId, preimage, paymentImage, settleDate) {
     // Check is campaignId exist
 
     // Check is campaignId exist
-    const isExist = await campaignDb.isCampaignExist(campaignDb)
+    const isExist = await campaignDb.isCampaignExist(campaignId)
     if(isExist) {  
         // Check invoice with defined preimage exist
         const isPreimageExist = await topUpReward.isPreimageExist(preimage)
         if(isPreimageExist) {
             const settle = await topUpReward.settled(preimage, paymentImage, settleDate)
             if(settle !== null) {
-                return settle
+                const publish = await campaignDb.publish(campaignId);
+                if(publish !== null) {
+                    return settle
+                } else {
+                    throw new Error(`failed to publish`)
+                }
             } else {
                 throw new Error(`failed to settle topup`)
             }
