@@ -11,11 +11,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLink , faMoneyBill, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from 'react-bootstrap/Table';
 import config from '../../config/config'
+import QRCode from "react-qr-code";
+import { faChain, faCheck } from '@fortawesome/free-solid-svg-icons';
+import clipboardCopy from 'clipboard-copy';
 
 function MyCampaign() {
   let navigate = useNavigate();
-  const { state } = useLocation();
-  const paid = localStorage.getItem("paid") || false;
+  const { state } = useLocation();  
+  const [isCopied, setIsCopied] = useState(false);
 
   const [urlList, setUrlList] = useState([]);
   
@@ -37,7 +40,7 @@ function MyCampaign() {
     };        
     getUrls();
 
-  }, [state.campaign, navigate, paid]);
+  }, [state.campaign, navigate]);
 
   const ArticleDetail = ({ article }) => {
     const {
@@ -48,8 +51,9 @@ function MyCampaign() {
       reward_per_click,
       created_at,
       original_content_url,
-      tags,
-    } = article;    
+      tags,      
+      lnurl_pay
+    } = article;        
 
     const cutPublisher = (inputString) => {
       const len = 6
@@ -58,6 +62,13 @@ function MyCampaign() {
       return firstFourChars+"..."+lastFourChars
     }
 
+    const handleCopy = (LNURLP) => {    
+      clipboardCopy(LNURLP)
+      setIsCopied(true);
+      setTimeout(function() {
+        setIsCopied(false)
+      }, 2000);
+    };
     
     return (
       <div className="postPage">
@@ -83,6 +94,18 @@ function MyCampaign() {
                   </Badge>
                 ))}
               </div>
+
+              <hr></hr>
+              <QRCode
+                      size={256}
+                      style={{marginBottom: "20px"}}
+                      value={lnurl_pay}
+                      viewBox={`0 0 256 256`}
+                    />
+                    <h6 style={{marginBottom: "0px"}}>{lnurl_pay}</h6> <br></br>
+                    <button className="btn btn-secondary btn-sm btn-copy" onClick={() => {handleCopy(lnurl_pay)}} disabled={ isCopied ? "disabled" : ""}>
+                      <FontAwesomeIcon icon={isCopied ? faCheck : faChain} /> { isCopied ? "Copied to Clipboard" : "Copy LNURLP"}
+                    </button>
             </Card.Body>
           </Card>
         </Col>
@@ -125,9 +148,6 @@ function MyCampaign() {
               </Table>
             </Card.Body>
           </Card>
-
-
-
         </Col>
       </Row>
       </Container>      
