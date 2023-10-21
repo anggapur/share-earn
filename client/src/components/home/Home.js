@@ -76,7 +76,7 @@ function Home() {
       <Container>
         <Row>        
           {postList.map((post) => {        
-            return <Col xs lg="3" style={{marginBottom: "15px"}}>
+            return <Col xs="6" md="4" lg="3" style={{marginBottom: "15px"}}>
               {ArticleCard({ 
                 id: post.id,
                 thumbnail: post.thumbnail, 
