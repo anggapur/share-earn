@@ -14,7 +14,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightFromBracket, faArrowRightToBracket, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket, faPlus } from '@fortawesome/free-solid-svg-icons';
 import config from './config/config'
 import Button from 'react-bootstrap/Button';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -32,6 +32,8 @@ function App() {
     }
 
     const unsetLocalStorage = () => {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user_id')
       setUser(null)
     }
 
@@ -43,10 +45,6 @@ function App() {
       res.data.id ? setLocalStorage(res) : unsetLocalStorage();      
     })
   })
-
-  const navigateHome = () => {
-    navigate("/");
-  };
 
   const navigateCreateCampaign = () => {
     console.log('NATIGATE')
@@ -114,8 +112,9 @@ function App() {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-      
-      <Button variant="success" className="btn-float"><FontAwesomeIcon icon={faPlus} onClick={navigateCreateCampaign}/> </Button>{' '}
+    
+      {/* Login Float Button */}
+      { user !== null ? (<Button variant="success" className="btn-float"><FontAwesomeIcon icon={faPlus} onClick={navigateCreateCampaign}/> </Button>) : <></>}    
       
       <Routes>
         <Route path="/" element={<Home />} />
