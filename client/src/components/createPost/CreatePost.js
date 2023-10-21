@@ -118,7 +118,7 @@ function CreatePost() {
       <Container>
         <Row>
           <Col>
-            <h1>Create Campaign</h1>
+            <h1 style={{marginTop:"20px"}}>Create Campaign</h1>
           </Col>
         </Row>
         <Row>
@@ -192,12 +192,14 @@ function CreatePost() {
                   
                 ): (
                   <div className="text-center">
+                    <h4>Scan or Copy this LNURL-Pay to fund your Campaign!</h4>
+                    <p style={{marginBottom: "30px"}}>Your campaign will be published after fund received</p>
                     <QRCode
                       size={256}
                       style={{marginBottom: "20px"}}
                       value={LNURLP}
                       viewBox={`0 0 256 256`}
-                    />
+                    />                    
                     <h6 style={{marginBottom: "0px"}}>{LNURLP}</h6> <br></br>
                     <button className="btn btn-secondary btn-sm btn-copy" onClick={handleCopy} disabled={ isCopied ? "disabled" : ""}>
                       <FontAwesomeIcon icon={isCopied ? faCheck : faChain} /> { isCopied ? "Copied to Clipboard" : "Copy LNURLP"}
@@ -207,7 +209,6 @@ function CreatePost() {
                     }}>
                       <FontAwesomeIcon icon={faHome} /> Go to Homepage
                     </button>
-
                   </div>
                 )
               }            

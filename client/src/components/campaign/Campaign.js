@@ -78,7 +78,7 @@ function Campaign() {
       <Container>
         <Row>
           <Col xs lg="12">
-            <h1>My Campaigns</h1>
+            <h1 style={{marginTop: " 20px"}}>My Campaigns</h1>
           </Col>
         </Row>
         <Row>        

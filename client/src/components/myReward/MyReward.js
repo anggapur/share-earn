@@ -154,20 +154,25 @@ function MyCampaign() {
     setAmountInSatoshi(event.target.value)
   };
 
-  const cutWords = (inputString) => {
-    const len = 16
+  const cutWords = (inputString, len) => {
+    len = len ?? 16
     const firstFourChars = inputString.substring(0, len);
     const lastFourChars = inputString.substring(inputString.length - len);
     return firstFourChars+"..."+lastFourChars
   }
 
+  const cutTitle = (inputString, len) => {
+    len = len ?? 16
+    const cuttedWords = inputString.substring(0, len);    
+    return cuttedWords+"..."
+  }
 
   return (
     <div className="myCampaign">
     <Container>
       <Row>   
         <Col>
-          <h1>My Rewards</h1>
+          <h1 style={{marginTop: " 20px"}}>My Rewards</h1>
         </Col>      
       </Row>
       <Row>
@@ -240,7 +245,9 @@ function MyCampaign() {
                     urls.map((el, index) => (
                       <tr key={index}>
                         <td>{index+1}</td>
-                        <td>{el.campaign_title}</td>
+                        <td>                          
+                            {cutTitle(el.campaign_title, 50)}                          
+                        </td>
                         <td>{el.url_hash}</td>
                         <td>{parseInt(el.total_reward)/1000} satoshis</td>
                       </tr>  
