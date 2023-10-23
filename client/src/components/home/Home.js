@@ -60,7 +60,7 @@ function Home() {
           </Card.Text>
           <div>
             {tags.split('|').map((tag, index) => (
-              <Badge key={id+"-"+index} variant="primary" className="mr-1">
+              <Badge key={id+"-"+index} variant="primary" className="mr-1" style={{marginRight: "10px"}}>
                 {tag}
               </Badge>
             ))}
