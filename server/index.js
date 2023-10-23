@@ -167,7 +167,7 @@ app.get("/url/:urlHash", async function(req, res, next) {
 	// Insert click counted
 	const isClicked = await clickCountDb.isAttempted(shareableUrl.id, clientIP)	
 	if(!isClicked) {
-		await clickCountDb.add(shareableUrl.id, clientIP, shareableUrl.reward_per_click ?? 0)
+		await clickCountDb.add(shareableUrl.id, clientIP, shareableUrl.reward_per_click)
 	}
 
 	// Redirect
