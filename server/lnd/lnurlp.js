@@ -50,7 +50,7 @@ async function LNURLPtoInvoice(lnurlp, amountInSatoshi) {
   console.log('lnurlp >> ', lnurlp)
   const {invoice } = await requestInvoice({
 		lnUrlOrAddress: lnurlp,
-		tokens: 1, // in TS you can use utils.checkedToSats or utils.toSats
+		tokens: amountInSatoshi, // in TS you can use utils.checkedToSats or utils.toSats
 	})
 
   console.log("END 1", invoice)
