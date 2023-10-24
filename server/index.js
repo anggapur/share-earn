@@ -188,6 +188,8 @@ app.get("/url/:urlHash", async function(req, res, next) {
 });
 
 const server = app.listen(serverConfig.port, serverConfig.host, function() {
+	console.log('PORT >> ', serverConfig.port)
+	console.log('HOST >> ',  serverConfig.host)
 	console.log('Server listening at ' + serverConfig.url);
 });
 
