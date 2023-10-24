@@ -95,6 +95,12 @@ app.get('/', function(req, res) {
 	res.send('Logged-in');
 });
 
+app.get('/api/v1', (req, res, next) => {
+	return res.status(200).send({
+		ok : true
+	})
+})
+
 app.use('/api/v1/campaigns', campaignRouter)
 app.use('/api/v1/rewards', rewardRouter)
 app.use('/api/v1/users', usersRouter)
