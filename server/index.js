@@ -128,7 +128,7 @@ app.get('/login',
 		next();
 	},
 	new LnurlAuth.Middleware({
-		callbackUrl: serverConfig.url + '/login',
+		callbackUrl: config.LNURL_AUTH_URL + '/login',
 		cancelUrl: config.CLIENT_URL,
         loginTemplateFilePath: path.join(__dirname, 'login.html'),
 		title: config.LOGIN_TITLE,

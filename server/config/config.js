@@ -28,6 +28,8 @@ const SERVER_URL = process.env.SERVER_URL
 
 const MEMO_PREFIX = process.env.MEMO_PREFIX
 
+const LNURL_AUTH_URL = process.env.LNURL_AUTH_URL
+
 module.exports = {
     HTTPS,
     HOSTNAME,
@@ -49,5 +51,6 @@ module.exports = {
     SERVER_URL,
     REST_HOST,
     LND_TYPE,
-    MEMO_PREFIX
+    MEMO_PREFIX,
+    LNURL_AUTH_URL
 }
